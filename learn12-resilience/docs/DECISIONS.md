@@ -42,3 +42,25 @@
 
 - Decision: `timeout-duration: 0`, then 429 with `Retry-After: 1`.
 - Rejected: waiting for a permit, which hides overload as latency and holds threads.
+
+## ADR-008: Simulate the cluster in one JVM
+
+- Decision: three in-memory replicas and a partition rule, controlled over HTTP.
+- Why: partitions, lag and quorums become one curl each, and the results are
+  deterministic and testable.
+- Rejected: three real processes with network proxies such as Toxiproxy.
+  More realistic, but the setup hides the idea.
+
+## ADR-009: Lamport clock plus a "seen" marker
+
+- Context: the first heal report listed a stale copy as a "lost" write.
+- Decision: each version stores the clock of the version its writer already
+  had. A loser is reported only if its clock is above the winner's `seen`.
+- Rejected: full version vectors. They're the real answer for multi-writer
+  stores, but too much code for the lesson. They're mentioned in the README.
+
+## ADR-010: Last-write-wins on heal
+
+- Decision: the newest version wins everywhere, and the losers are reported.
+- Why: it makes AP data loss visible, which is the most important AP lesson.
+- Rejected: silent LWW (hides the problem) and CRDT merges (a separate topic).

@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: resilience3-cap-theorem
+
+server:
+  port: 8134

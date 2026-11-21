@@ -60,3 +60,39 @@ curl -s localhost:8133/actuator/health | jq .components.circuitBreakers
 curl -s localhost:8133/actuator/circuitbreakerevents/prices
 curl -s localhost:8133/actuator/prometheus | grep resilience4j_circuitbreaker_state
 ```
+
+## resilience3-cap-theorem
+
+No other service is needed:
+
+```bash
+./gradlew :learn12-resilience:resilience3-cap-theorem:bootRun
+```
+
+A full CP vs AP session with curl:
+
+```bash
+B=localhost:8134
+curl -s -X POST $B/reset
+curl -s -X PUT $B/nodes/n1/kv/x -H 'Content-Type: text/plain' -d v1
+curl -s -X POST $B/partition -H 'Content-Type: application/json' -d '{"groups":[["n1","n2"],["n3"]]}'
+curl -s -X PUT $B/nodes/n3/kv/x -H 'Content-Type: text/plain' -d minority   # CP: 503
+curl -s $B/nodes/n3/kv/x                                                     # CP: 503
+curl -s -X PUT $B/nodes/n1/kv/x -H 'Content-Type: text/plain' -d v2         # CP: 200, 2 acks
+curl -s -X POST $B/heal                                                       # n3 catches up
+curl -s $B/cluster                                                            # every node's copy
+
+curl -s -X POST $B/settings -H 'Content-Type: application/json' -d '{"mode":"AP","w":1,"r":1,"lagMs":0,"hopMs":0}'
+curl -s -X POST $B/partition -H 'Content-Type: application/json' -d '{"groups":[["n1","n2"],["n3"]]}'
+curl -s -X PUT $B/nodes/n3/kv/cart -H 'Content-Type: text/plain' -d book    # AP: 200
+curl -s -X PUT $B/nodes/n1/kv/cart -H 'Content-Type: text/plain' -d pen     # AP: 200
+curl -s $B/nodes/n1/kv/cart; curl -s $B/nodes/n3/kv/cart                     # pen / book
+curl -s -X POST $B/heal                                                       # pen wins, book in "discarded"
+```
+
+| Setting                          | Shows                                       |
+| -------------------------------- | ------------------------------------------- |
+| `{"mode":"AP","lagMs":800,...}`  | stale read right after a write, then correct |
+| `{"mode":"CP","w":1,"r":1,...}` + partition `[["n1"],["n2","n3"]]` | stale read without quorum overlap |
+| `{"mode":"CP","w":3,"r":1,...}` + any partition | every write refused              |
+| `{"mode":"CP","w":2,"r":2,"hopMs":200,...}` | each write takes at least 200 ms (PACELC) |

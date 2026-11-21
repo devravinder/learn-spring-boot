@@ -40,3 +40,49 @@ flowchart LR
   call1 & call2 & call3 & call4 --> fl[flaky-service]
   cb -.->|state, events| act["actuator: health, circuitbreakerevents, prometheus"]
 ```
+
+## resilience3-cap-theorem
+
+CP write during a partition:
+
+```mermaid
+sequenceDiagram
+  participant C as client
+  participant N3 as n3 (minority)
+  participant N1 as n1 (majority)
+  participant N2 as n2
+  C->>N3: PUT x=minority
+  Note over N3: reachable = {n3} < W=2
+  N3-->>C: 503 (stay consistent)
+  C->>N1: PUT x=v2
+  N1->>N2: replicate (wait hopMs)
+  N2-->>N1: ack
+  N1-->>C: 200 acks=2
+```
+
+AP writes on both sides, then heal:
+
+```mermaid
+sequenceDiagram
+  participant C as client
+  participant N1 as n1
+  participant N3 as n3
+  C->>N3: PUT cart=book (clock 2, seen 1)
+  N3-->>C: 200 acks=1
+  C->>N1: PUT cart=pen (clock 3, seen 1)
+  N1-->>C: 200
+  Note over N1,N3: reads differ: pen vs book
+  C->>N1: POST /heal
+  Note over N1,N3: newest wins (clock 3 = pen)
+  Note over N1,N3: book clock 2 > pen.seen 1, so it was concurrent and is reported lost
+```
+
+The quorum rule:
+
+```mermaid
+flowchart LR
+  w["write set: W nodes"] --- overlap{"R + W > N ?"}
+  r["read set: R nodes"] --- overlap
+  overlap -->|yes| fresh["at least one node in both sets: read sees the last write"]
+  overlap -->|no| stale["the sets can miss each other: stale reads"]
+```

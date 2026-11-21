@@ -101,3 +101,66 @@ Resilience4j nests the aspects like this:
   only adds delay.
 - Every retry attempt counts as a call in the breaker's window, so 2 user
   requests × 3 attempts = 6 recorded failures.
+
+## resilience3-cap-theorem
+
+### CAP in one paragraph
+
+Data copied to several nodes can have three properties:
+
+- `C` (consistency): every read sees the latest write.
+- `A` (availability): every request to a working node gets an answer.
+- `P` (partition tolerance): the system keeps going when messages between nodes are lost.
+
+Networks do fail, so `P` isn't optional. During a partition you choose:
+refuse some requests to stay consistent (`CP`), or answer everything and
+accept that replicas disagree for a while (`AP`).
+
+```mermaid
+flowchart LR
+  subgraph majority[Side 1: n1, n2]
+    n1((n1))
+    n2((n2))
+  end
+  subgraph minority[Side 2: n3]
+    n3((n3))
+  end
+  n1 --- n2
+  n2 -. "partition: messages lost" .- n3
+```
+
+| During the partition | `CP` (quorum W=2, R=2)              | `AP`                                          |
+| -------------------- | ----------------------------------- | --------------------------------------------- |
+| write via n1         | 200, 2 acks                         | 200                                           |
+| write via n3         | 503, can't reach 2 replicas         | 200, 1 ack                                    |
+| read via n3          | 503                                 | 200, maybe stale or different from n1         |
+| after heal           | n3 copies the newest; nothing lost  | last-write-wins; concurrent writes are dropped and reported |
+
+### What the module simulates
+
+| Concept               | Where / how                                                         |
+| --------------------- | ------------------------------------------------------------------- |
+| Replicas              | `n1`, `n2`, `n3` in one JVM (`Cluster`)                             |
+| Network partition     | `POST /partition {"groups":[["n1","n2"],["n3"]]}`; `POST /heal`     |
+| Quorums               | `W` and `R`; `quorumOverlap` is true when `R + W > N`               |
+| Versions              | Lamport clock + node name; `seen` marks what the writer already had |
+| Conflict resolution   | last-write-wins on heal; concurrent losers listed in `discarded`    |
+| Eventual consistency  | AP with `lagMs`: a read right after a write is stale, then catches up |
+| PACELC                | `hopMs`: Else (no partition) you trade Latency for Consistency      |
+
+Lessons the test proves:
+
+- `R + W > N` is what makes reads consistent, not the word "CP". With `W=1`,
+  `R=1`, a read after a partition returns old data.
+- `W = N` is consistent but fragile: one unreachable node blocks every write.
+- AP and last-write-wins lose data silently. Real AP stores use version vectors
+  or CRDTs (for example, a shopping cart that merges both sides) to keep both writes.
+- PACELC: even with a healthy network, a synchronous quorum write costs a round
+  trip (about 200 ms here), and a local AP write doesn't.
+
+| Real system             | Typical choice                                      |
+| ----------------------- | --------------------------------------------------- |
+| PostgreSQL primary + sync replica | CP: no writes without the primary         |
+| etcd, ZooKeeper, Consul | CP: Raft or ZAB majority                            |
+| Cassandra, DynamoDB     | tunable: `ONE` (AP) to `QUORUM` / `ALL` (C)         |
+| DNS, CDN caches         | AP: stale for a TTL, always answers                 |

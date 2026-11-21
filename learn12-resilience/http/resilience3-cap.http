@@ -1,0 +1,43 @@
+@b = http://localhost:8134
+
+### reset (CP, W=2, R=2)
+POST {{b}}/reset
+
+### write via n1
+PUT {{b}}/nodes/n1/kv/x
+Content-Type: text/plain
+
+v1
+
+### cut n3 off
+POST {{b}}/partition
+Content-Type: application/json
+
+{"groups": [["n1", "n2"], ["n3"]]}
+
+### CP: minority write -> 503
+PUT {{b}}/nodes/n3/kv/x
+Content-Type: text/plain
+
+minority
+
+### CP: minority read -> 503
+GET {{b}}/nodes/n3/kv/x
+
+### switch to AP
+POST {{b}}/settings
+Content-Type: application/json
+
+{"mode": "AP", "w": 1, "r": 1, "lagMs": 0, "hopMs": 0}
+
+### AP: minority write accepted
+PUT {{b}}/nodes/n3/kv/x
+Content-Type: text/plain
+
+book
+
+### heal + last-write-wins report
+POST {{b}}/heal
+
+### every node's copy, settings, quorum overlap
+GET {{b}}/cluster

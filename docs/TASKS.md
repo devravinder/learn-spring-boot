@@ -16,7 +16,7 @@ One commit per task, made once its checks pass.
 | 9   | `learn8-security/mfa/mfa5-keycloak-otp`                     | done    |
 | 10  | `learn12-resilience`: flaky service + Spring core retry     | done    |
 | 11  | `learn12-resilience/resilience2-resilience4j`               | done    |
-| 12  | `learn12-resilience/resilience3-cap-theorem`                | planned |
+| 12  | `learn12-resilience/resilience3-cap-theorem`                | done    |
 | 13  | `learn13-rest-api/rest1-validation-problem-details`         | planned |
 | 14  | `learn13-rest-api/rest2-api-versioning`                     | planned |
 | 15  | `learn13-rest-api/rest3-http-interface-clients`             | planned |
@@ -114,3 +114,10 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] Rate limiter, semaphore bulkhead, time limiter with a thread-pool bulkhead
 - [x] Actuator health, events and Prometheus metrics
 - [x] 23 end-to-end checks against the downstream stats
+
+## Task 12: CAP theorem
+
+- [x] Three replicas, partitions and heal; CP quorum vs AP local writes
+- [x] Lamport versions, last-write-wins with concurrent losers reported
+- [x] Replication lag (eventual consistency), `R + W > N`, `W = N`, PACELC latency
+- [x] 20 end-to-end checks
