@@ -58,3 +58,46 @@ server return the stored result instead of charging again.
 A proxy pitfall to remember: `@Retryable` beans are CGLIB proxies. Reading a
 field through the proxy gives `null`, so expose state through methods
 (`PriceClient.attempts()`).
+
+## resilience2-resilience4j
+
+| Pattern          | Annotation + config                                             | Seen in the test                              |
+| ---------------- | --------------------------------------------------------------- | --------------------------------------------- |
+| Circuit breaker  | `@CircuitBreaker(name="prices")`; window 10, min 5 calls, 50 %, open 3 s | OPEN after 2 failing requests (6 attempts); downstream gets 0 calls while open |
+| Half-open        | `permitted-number-of-calls-in-half-open-state: 2`, automatic transition | 2 good trial calls close it again    |
+| Ignore 4xx       | `ignore-exceptions: HttpClientErrorException`                   | a 404 doesn't move the failure rate           |
+| Slow calls       | `slow-call-duration-threshold: 800ms`                           | slow is treated like failed                   |
+| Retry            | `@Retry(name="prices", fallbackMethod=...)`, 3 attempts, 100 ms × 2 | 2 glitches healed with no fallback        |
+| Fallback         | `cachedPrice(...)`, overloaded per exception type               | last known price with `source: cache`         |
+| Rate limiter     | `@RateLimiter(name="search")`, 5 per 1 s, no waiting            | 5 × 200 then 5 × 429 with `Retry-After`       |
+| Bulkhead (semaphore) | `@Bulkhead(name="reports")`, 2 concurrent, no wait          | 2 ok, 3 `BulkheadFullException`               |
+| Time limiter     | `@TimeLimiter(name="slow")` + thread-pool bulkhead, 500 ms      | fallback after about 0.5 s instead of 1.5 s   |
+| Observability    | actuator `circuitbreakers`, `circuitbreakerevents`, health, Prometheus | state, transitions, retry and limiter metrics |
+
+### Circuit breaker states
+
+```mermaid
+stateDiagram-v2
+  [*] --> CLOSED
+  CLOSED --> OPEN: failure or slow rate >= 50 % (after 5 calls)
+  OPEN --> HALF_OPEN: after 3 s
+  HALF_OPEN --> CLOSED: 2 trial calls succeed
+  HALF_OPEN --> OPEN: a trial call fails
+  note right of OPEN
+    calls fail at once with CallNotPermittedException
+    the fallback answers, the downstream can recover
+  end note
+```
+
+### Aspect order matters
+
+Resilience4j nests the aspects like this:
+`Retry( CircuitBreaker( RateLimiter( TimeLimiter( Bulkhead( call ) ) ) ) )`.
+
+- Put the fallback on the outermost aspect you use (`@Retry` here). A fallback on
+  `@CircuitBreaker` catches the error first, and Retry never retries. Our first
+  run showed exactly that.
+- Tell Retry to ignore `CallNotPermittedException`. Retrying an open breaker
+  only adds delay.
+- Every retry attempt counts as a call in the breaker's window, so 2 user
+  requests × 3 attempts = 6 recorded failures.

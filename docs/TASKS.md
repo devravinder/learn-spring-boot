@@ -15,7 +15,7 @@ One commit per task, made once its checks pass.
 | 8   | `learn8-security/mfa/mfa4-step-up`                          | done    |
 | 9   | `learn8-security/mfa/mfa5-keycloak-otp`                     | done    |
 | 10  | `learn12-resilience`: flaky service + Spring core retry     | done    |
-| 11  | `learn12-resilience/resilience2-resilience4j`               | planned |
+| 11  | `learn12-resilience/resilience2-resilience4j`               | done    |
 | 12  | `learn12-resilience/resilience3-cap-theorem`                | planned |
 | 13  | `learn13-rest-api/rest1-validation-problem-details`         | planned |
 | 14  | `learn13-rest-api/rest2-api-versioning`                     | planned |
@@ -106,3 +106,11 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] Timeouts, `@Retryable` with backoff and jitter, 4xx not retried, `RetryTemplate` + listener
 - [x] Idempotency key for a lost reply; `@ConcurrencyLimit` BLOCK and REJECT
 - [x] 12 end-to-end checks against the downstream stats
+
+## Task 11: Resilience4j
+
+- [x] Circuit breaker states with half-open recovery, ignored 4xx, slow-call threshold
+- [x] Retry with backoff and the fallback on the outer aspect; cached fallback
+- [x] Rate limiter, semaphore bulkhead, time limiter with a thread-pool bulkhead
+- [x] Actuator health, events and Prometheus metrics
+- [x] 23 end-to-end checks against the downstream stats

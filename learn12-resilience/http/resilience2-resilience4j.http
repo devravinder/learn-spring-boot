@@ -1,0 +1,32 @@
+@flaky = http://localhost:8131
+@app = http://localhost:8133
+
+### break the downstream
+POST {{flaky}}/chaos
+Content-Type: application/json
+
+{"failRate": 1, "failNext": 0, "latencyMs": 0, "status": 503}
+
+### price (live, then cache once failing, then "circuit open")
+GET {{app}}/prices/p1
+
+### breaker state and metrics
+GET {{app}}/breaker
+
+### heal
+POST {{flaky}}/chaos/reset
+
+### rate limited search (run fast, > 5 per second -> 429)
+GET {{app}}/search?q=p1
+
+### semaphore bulkhead
+GET {{app}}/reports?n=5
+
+### time limiter fallback
+GET {{app}}/slow?ms=1500
+
+### breaker transitions
+GET {{app}}/actuator/circuitbreakerevents/prices
+
+### health with breaker details
+GET {{app}}/actuator/health

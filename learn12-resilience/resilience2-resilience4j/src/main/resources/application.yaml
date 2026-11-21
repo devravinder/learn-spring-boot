@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: resilience2-resilience4j
+
+server:
+  port: 8133
+
+flaky:
+  base-url: http://localhost:8131
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      prices:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5 # no verdict before 5 calls
+        failure-rate-threshold: 50 # open when half of the window failed
+        slow-call-duration-threshold: 800ms
+        slow-call-rate-threshold: 50 # slow calls count as failures too
+        wait-duration-in-open-state: 3s
+        automatic-transition-from-open-to-half-open-enabled: true
+        permitted-number-of-calls-in-half-open-state: 2
+        record-exceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.web.client.ResourceAccessException
+        ignore-exceptions:
+          - org.springframework.web.client.HttpClientErrorException # a 404 says nothing about health
+        register-health-indicator: true
+  retry:
+    instances:
+      prices:
+        max-attempts: 3
+        wait-duration: 100ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.web.client.ResourceAccessException
+        ignore-exceptions:
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException # don't retry an open breaker
+  ratelimiter:
+    instances:
+      search:
+        limit-for-period: 5
+        limit-refresh-period: 1s
+        timeout-duration: 0 # reject at once instead of waiting for a permit
+  bulkhead:
+    instances:
+      reports:
+        max-concurrent-calls: 2
+        max-wait-duration: 0
+  thread-pool-bulkhead:
+    instances:
+      slow:
+        core-thread-pool-size: 2
+        max-thread-pool-size: 4
+        queue-capacity: 10
+  timelimiter:
+    instances:
+      slow:
+        timeout-duration: 500ms
+        cancel-running-future: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,circuitbreakers,circuitbreakerevents,retries,ratelimiters,bulkheads,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true

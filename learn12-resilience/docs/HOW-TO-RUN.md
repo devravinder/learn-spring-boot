@@ -35,3 +35,28 @@ curl -s localhost:8131/chaos/stats   # calls, failures, maxInFlight, charges
 | `failNext: 2, status: 502`    | `POST :8132/payments?amount=500` | 200, `retries: 1`; stats show `charges: 1`  |
 | reset                         | `GET :8132/bulkhead?n=6`        | all ok; stats `maxInFlight: 2`               |
 | reset                         | `GET :8132/bulkhead?n=5&mode=reject` | most rejected; `maxInFlight: 1`         |
+
+## resilience2-resilience4j
+
+```bash
+./gradlew :learn12-resilience:resilience2-resilience4j:bootRun
+```
+
+| Step                                             | Request                           | Expected                                  |
+| ------------------------------------------------ | --------------------------------- | ----------------------------------------- |
+| reset chaos                                      | `GET :8133/prices/p1`             | `source: live`; `GET :8133/breaker` is `CLOSED` |
+| chaos `failRate: 1`                              | `GET :8133/prices/p1` twice       | `source: cache`; breaker `OPEN`           |
+| keep failing                                     | `GET :8133/prices/p1` × 5         | `reason: circuit open`; `/chaos/stats` calls don't change |
+| reset chaos, wait 3 s                            | `GET :8133/breaker`               | `HALF_OPEN`; 2 more price calls → `CLOSED` |
+| chaos `failNext: 2`                              | `GET :8133/prices/p3`             | `source: live` (healed by retry)          |
+| reset                                            | `GET :8133/search?q=p1` × 10 fast | 5 × 200, 5 × 429                          |
+| reset                                            | `GET :8133/reports?n=5`           | `ok: 2, full: 3`                          |
+| reset                                            | `GET :8133/slow?ms=1500`          | fallback after about 500 ms               |
+
+Actuator views:
+
+```bash
+curl -s localhost:8133/actuator/health | jq .components.circuitBreakers
+curl -s localhost:8133/actuator/circuitbreakerevents/prices
+curl -s localhost:8133/actuator/prometheus | grep resilience4j_circuitbreaker_state
+```
