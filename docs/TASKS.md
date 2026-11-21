@@ -22,7 +22,7 @@ One commit per task, made once its checks pass.
 | 15  | `learn13-rest-api/rest3-http-interface-clients`             | done    |
 | 16  | `learn13-rest-api/rest4-openapi`                            | done    |
 | 17  | `learn14-data-jpa/data1-jpa-essentials` (incl. cursor pagination) | done    |
-| 18  | Docs with Mermaid diagrams for the existing projects        | planned |
+| 18  | Docs with Mermaid diagrams for the existing projects        | done    |
 
 ## Task 0: Boot 4 upgrade
 
@@ -156,3 +156,9 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] Auditing, `@Version`; optimistic vs pessimistic vs atomic under 20 parallel requests
 - [x] Rollback rules, `REQUIRES_NEW`, the checked-exception trap
 - [x] 27 end-to-end checks with recorded SQL
+
+## Task 18: docs for the existing projects
+
+- [x] README with Mermaid diagrams for learn1–learn10 (security covers basic, jwt, oauth2)
+- [x] Root README as a topic map; `docs/architecture.md` with layout, conventions and ports
+- [x] Statements checked against the code; markdownlint clean; every diagram rendered

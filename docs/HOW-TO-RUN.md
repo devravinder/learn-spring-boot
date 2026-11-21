@@ -55,3 +55,22 @@ curl -u login-client:openid-connect \
 ```
 
 The `auth-client` apps do this for you.
+
+## Per-topic guides
+
+| Topic                    | Guide                                                                     |
+| ------------------------ | ------------------------------------------------------------------------- |
+| Actuator                 | [learn11-actuator/docs/HOW-TO-RUN.md](../learn11-actuator/docs/HOW-TO-RUN.md) |
+| OTLP to otel-lgtm        | [observe3-otel-lgtm/docs/HOW-TO-RUN.md](../learn10-observability/observe3-otel-lgtm/docs/HOW-TO-RUN.md) |
+| OTel Java agent          | [observe4-otel-javaagent/docs/HOW-TO-RUN.md](../learn10-observability/observe4-otel-javaagent/docs/HOW-TO-RUN.md) |
+| MFA                      | [learn8-security/mfa/docs/HOW-TO-RUN.md](../learn8-security/mfa/docs/HOW-TO-RUN.md) |
+| Resilience and CAP       | [learn12-resilience/docs/HOW-TO-RUN.md](../learn12-resilience/docs/HOW-TO-RUN.md) |
+| REST APIs                | [learn13-rest-api/docs/HOW-TO-RUN.md](../learn13-rest-api/docs/HOW-TO-RUN.md) |
+| Data JPA                 | [learn14-data-jpa/docs/HOW-TO-RUN.md](../learn14-data-jpa/docs/HOW-TO-RUN.md) |
+| Older topics             | the "Run" row in each topic's `README.md`                                 |
+
+## Lint the docs
+
+```bash
+npx markdownlint-cli2   # uses .markdownlint.jsonc and .markdownlint-cli2.jsonc
+```
