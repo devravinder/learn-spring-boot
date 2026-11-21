@@ -29,3 +29,22 @@
 
 - Decision: a 500 problem carries an `errorId`, and the stack trace is logged under that id.
 - Why: exception messages leak internals. Our test exception holds a fake password.
+
+## ADR-006: Header first, query parameter as a fallback
+
+- Decision: `API-Version` header plus `?version=`.
+- Why: URLs stay the same across versions (good for caches and links), and the
+  query parameter keeps browser testing easy.
+- Rejected: path segments (`/v2/...`). They're common, but every version
+  becomes a new resource URL.
+
+## ADR-007: A default version instead of `required`
+
+- Decision: `default: 1.0`.
+- Why: existing clients that never sent a version keep working. New APIs can
+  use `required: true` from day one.
+
+## ADR-008: Baselines (`1.0+`, `1.1+`) for unchanged endpoints
+
+- Decision: only endpoints that changed get a new mapping.
+- Rejected: copying every endpoint per version, which multiplies the code for no change.

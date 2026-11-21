@@ -21,3 +21,14 @@ No containers are needed.
 | `GET /users/boom`                                          | 500 with an `errorId`; the cause appears only in the log |
 
 All requests: [../http/rest1-problems.http](../http/rest1-problems.http).
+
+## rest2-api-versioning
+
+```bash
+./gradlew :learn13-rest-api:rest2-api-versioning:bootRun
+curl -si localhost:8142/products/1                         # v1 + Deprecation/Sunset/Link
+curl -s  localhost:8142/products/1 -H 'API-Version: 2.0'   # v2 shape
+curl -s  'localhost:8142/products/1?version=2.0'           # same, as a query parameter
+curl -si localhost:8142/products -H 'API-Version: 1.0'     # 404: added in 1.1
+curl -s  localhost:8142/products/1 -H 'API-Version: 3.0'   # 400 problem
+```

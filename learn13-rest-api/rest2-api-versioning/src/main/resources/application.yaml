@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: rest2-api-versioning
+  mvc:
+    problemdetails:
+      enabled: true
+    apiversion:
+      use:
+        header: API-Version # preferred: URLs stay stable
+        query-parameter: version # handy for browsers and quick tests
+      supported: 1.0,1.1,2.0
+      default: 1.0 # old clients that send nothing keep working
+
+server:
+  port: 8142

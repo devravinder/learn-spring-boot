@@ -59,3 +59,43 @@ Example response:
   ]
 }
 ```
+
+## rest2-api-versioning
+
+Spring Framework 7 has API versioning built in. A mapping can say
+`version = "2.0"` (exactly this version) or `version = "1.1+"` (this version and
+later, until a higher mapping takes over).
+
+| Request (`API-Version`) | `GET /products/1`                         | `GET /products` | Headers                          |
+| ----------------------- | ----------------------------------------- | --------------- | -------------------------------- |
+| none → default `1.0`    | `{id, name, price}`                       | 404 (not yet)   | `Deprecation`, `Sunset`, `Link`  |
+| `1.1`                   | same v1 shape (from the `1.0+` baseline)  | 200 (`1.1+`)    | `Deprecation`, `Sunset`          |
+| `2.0`                   | `{id, title, price: {amount, currency}}`  | 200             | none                             |
+| `3.0` or `abc`          | 400 problem, "Invalid API version"        | 400             |                                  |
+
+```mermaid
+flowchart LR
+  req[request] --> res{"version from API-Version header or ?version="}
+  res -->|missing| def[default 1.0]
+  res --> sup{supported? 1.0, 1.1, 2.0}
+  def --> sup
+  sup -->|no| bad[400 problem]
+  sup -->|yes| map{best mapping}
+  map -->|"1.0 / 1.1"| v1["v1() version 1.0+"]
+  map -->|"2.0"| v2["v2() version 2.0"]
+  v1 --> dep["deprecation handler adds Deprecation / Sunset / Link"]
+```
+
+| Setting                                  | Where              |
+| ---------------------------------------- | ------------------ |
+| header and query parameter names         | `spring.mvc.apiversion.use.*` |
+| supported versions, default              | `spring.mvc.apiversion.supported`, `.default` |
+| deprecation dates and links per version  | `VersioningConfig` with `StandardApiVersionDeprecationHandler` |
+| make the version mandatory               | `spring.mvc.apiversion.required: true` (instead of a default) |
+| version in the path (`/v2/products`)     | `spring.mvc.apiversion.use.path-segment: 0` |
+
+Versioning rules of thumb:
+
+- Bump the major version only for breaking changes (a renamed field, a type change, a removed endpoint).
+- Adding a field is not breaking. Clients must ignore unknown fields.
+- Announce removal with `Deprecation` and `Sunset` headers well before the date.

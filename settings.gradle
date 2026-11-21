@@ -99,3 +99,4 @@ include 'learn12-resilience:resilience2-resilience4j'
 include 'learn12-resilience:resilience3-cap-theorem'
 
 include 'learn13-rest-api:rest1-validation-problem-details'
+include 'learn13-rest-api:rest2-api-versioning'

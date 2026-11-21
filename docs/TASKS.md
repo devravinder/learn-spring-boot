@@ -18,7 +18,7 @@ One commit per task, made once its checks pass.
 | 11  | `learn12-resilience/resilience2-resilience4j`               | done    |
 | 12  | `learn12-resilience/resilience3-cap-theorem`                | done    |
 | 13  | `learn13-rest-api/rest1-validation-problem-details`         | done    |
-| 14  | `learn13-rest-api/rest2-api-versioning`                     | planned |
+| 14  | `learn13-rest-api/rest2-api-versioning`                     | done    |
 | 15  | `learn13-rest-api/rest3-http-interface-clients`             | planned |
 | 16  | `learn13-rest-api/rest4-openapi`                            | planned |
 | 17  | `learn14-data-jpa/data1-jpa-essentials` (incl. cursor pagination) | planned |
@@ -128,3 +128,10 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] RFC 9457 for validation, domain, framework (400, 404, 405, 415) and unexpected (500) errors
 - [x] `instance` filled by one advice; no internals leaked
 - [x] 20 end-to-end checks
+
+## Task 14: API versioning
+
+- [x] Header and query strategies, supported list, default version
+- [x] Exact (`2.0`) and baseline (`1.0+`, `1.1+`) mappings
+- [x] Deprecation, Sunset and Link headers; 400 for unsupported versions
+- [x] 13 end-to-end checks

@@ -1,0 +1,23 @@
+@b = http://localhost:8142
+
+### default 1.0 (deprecated: see Deprecation, Sunset, Link headers)
+GET {{b}}/products/1
+
+### 1.1 served by the 1.0+ baseline
+GET {{b}}/products/1
+API-Version: 1.1
+
+### list exists from 1.1
+GET {{b}}/products
+API-Version: 1.1
+
+### 2.0 breaking change
+GET {{b}}/products/1
+API-Version: 2.0
+
+### query parameter strategy
+GET {{b}}/products/1?version=2.0
+
+### unsupported -> 400
+GET {{b}}/products/1
+API-Version: 3.0
