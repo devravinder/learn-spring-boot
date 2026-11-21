@@ -1,0 +1,32 @@
+// shared by both services: download the agent and attach it to bootRun
+configurations {
+    otelAgent
+}
+
+dependencies {
+    otelAgent 'io.opentelemetry.javaagent:opentelemetry-javaagent:2.34.0'
+}
+
+def agentJar = layout.buildDirectory.file('otel/opentelemetry-javaagent.jar')
+
+tasks.register('copyOtelAgent', Copy) {
+    from configurations.otelAgent
+    into layout.buildDirectory.dir('otel')
+    rename { 'opentelemetry-javaagent.jar' }
+}
+
+tasks.named('bootJar') {
+    dependsOn 'copyOtelAgent'
+}
+
+tasks.named('bootRun') {
+    dependsOn 'copyOtelAgent'
+    jvmArgs = [
+            "-javaagent:${agentJar.get().asFile}",
+            "-Dotel.service.name=${project.name}-agent",
+            '-Dotel.exporter.otlp.endpoint=http://localhost:4318',
+            '-Dotel.exporter.otlp.protocol=http/protobuf',
+            '-Dotel.metric.export.interval=10000',
+            '-Dotel.resource.attributes=deployment.environment=local'
+    ]
+}

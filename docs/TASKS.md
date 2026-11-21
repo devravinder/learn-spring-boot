@@ -8,7 +8,7 @@ One commit per task, made once its checks pass.
 | 1   | `learn11-actuator/actuator1-custom-metrics`                 | done    |
 | 2   | `learn11-actuator/actuator2-advanced-config`                | done    |
 | 3   | `learn10-observability/observe3-otel-lgtm` (Micrometer + OTLP) | done    |
-| 4   | `learn10-observability/observe4-otel-javaagent`             | planned |
+| 4   | `learn10-observability/observe4-otel-javaagent`             | done    |
 | 5   | `learn8-security/mfa/mfa1-totp`                             | planned |
 | 6   | `learn8-security/mfa/mfa2-email-ott`                        | planned |
 | 7   | `learn8-security/mfa/mfa3-passkeys`                         | planned |
@@ -60,3 +60,10 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] Logs in Loki with `trace_id`; error logs; manual `Observation` span + timer
 - [x] Provisioned dashboard; every panel query checked against Prometheus
 - [x] 17 end-to-end checks against Prometheus, Tempo and Loki
+
+## Task 4: OpenTelemetry Java agent
+
+- [x] Agent 2.34.0 resolved by Gradle and attached in `bootRun` with `-Dotel.*` flags
+- [x] Zero-code traces, semantic-convention metrics and logs; `@WithSpan` and the OTel metrics API
+- [x] Dashboard on semantic-convention names; comparison table against observe3
+- [x] 17 end-to-end checks; observe3 rechecked with the regenerated dashboard

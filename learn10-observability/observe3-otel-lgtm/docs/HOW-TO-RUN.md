@@ -33,7 +33,7 @@ Each response includes a `traceId`. Metrics are pushed every 10 s.
 | ------------------------------------------ | ------------------------------------------------------------ |
 | Dashboards → `Spring services (OTLP)`      | rate, p95 latency, 5xx, orders per product, heap, error logs |
 | Explore → Tempo → TraceQL `{ trace:id = "<traceId>" }` | `order-service` → `product-service` spans, plus `order.pricing` |
-| Explore → Tempo → `{ span.customer-id = "c-42" }` | traces found by baggage                              |
+| Explore → Tempo → `{ span."customer-id" = "c-42" }` | traces found by baggage                              |
 | Explore → Loki → `{service_name="product-service"} \| trace_id="<traceId>"` | product logs for one order, with `customer_id` |
 | Explore → Prometheus → `orders_created_total` | one series per product                                   |
 | Dashboards → `JVM Metrics`, `RED Metrics`  | built-in otel-lgtm dashboards                                |

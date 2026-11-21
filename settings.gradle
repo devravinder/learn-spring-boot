@@ -83,3 +83,6 @@ include 'learn11-actuator:actuator2-advanced-config'
 
 include 'learn10-observability:observe3-otel-lgtm:order-service'
 include 'learn10-observability:observe3-otel-lgtm:product-service'
+
+include 'learn10-observability:observe4-otel-javaagent:order-service'
+include 'learn10-observability:observe4-otel-javaagent:product-service'

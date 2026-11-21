@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: order-service
+
+server:
+  port: 8113
+
+product:
+  base-url: http://localhost:8114

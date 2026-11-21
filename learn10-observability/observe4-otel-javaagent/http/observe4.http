@@ -1,0 +1,23 @@
+@orders = http://localhost:8113
+
+### happy path (W3C baggage header)
+POST {{orders}}/orders
+Content-Type: application/json
+baggage: customer-id=c-42
+
+{"productId": "p1", "quantity": 2}
+
+### slow downstream
+POST {{orders}}/orders
+Content-Type: application/json
+
+{"productId": "slow", "quantity": 1}
+
+### downstream error
+POST {{orders}}/orders
+Content-Type: application/json
+
+{"productId": "broken", "quantity": 1}
+
+### semantic-convention metric names
+GET http://localhost:9090/api/v1/query?query=http_server_request_duration_seconds_count

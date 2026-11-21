@@ -1,0 +1,209 @@
+{
+  "uid": "spring-otel-agent",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Requests per second",
+      "id": 1,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 0,
+        "w": 12,
+        "h": 8,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum by (job) (rate(http_server_request_duration_seconds_count{job=~\".+-agent\"}[1m]))",
+          "legendFormat": "{{job}}",
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "refId": "A"
+        }
+      ],
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "options": {}
+    },
+    {
+      "type": "timeseries",
+      "title": "p95 latency",
+      "id": 2,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 12,
+        "w": 12,
+        "h": 8,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (job, le) (rate(http_server_request_duration_seconds_bucket{job=~\".+-agent\"}[1m])))",
+          "legendFormat": "{{job}}",
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "refId": "A"
+        }
+      ],
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "options": {}
+    },
+    {
+      "type": "timeseries",
+      "title": "Server errors (5xx) per second",
+      "id": 3,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 0,
+        "w": 12,
+        "h": 8,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (job, http_route) (rate(http_server_request_duration_seconds_count{job=~\".+-agent\", http_response_status_code=~\"5..\"}[1m]))",
+          "legendFormat": "{{job}} {{http_route}}",
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "refId": "A"
+        }
+      ],
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "options": {}
+    },
+    {
+      "type": "timeseries",
+      "title": "Orders created / failed per minute",
+      "id": 4,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 12,
+        "w": 12,
+        "h": 8,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (product) (increase(orders_created_total{job=~\".+-agent\"}[1m])) or sum by (reason) (increase(orders_failed_total{job=~\".+-agent\"}[1m]))",
+          "legendFormat": "{{product}}{{reason}}",
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "refId": "A"
+        }
+      ],
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "options": {}
+    },
+    {
+      "type": "timeseries",
+      "title": "JVM heap used",
+      "id": 5,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 0,
+        "w": 12,
+        "h": 8,
+        "y": 16
+      },
+      "targets": [
+        {
+          "expr": "sum by (job) (jvm_memory_used_bytes{job=~\".+-agent\", jvm_memory_type=\"heap\"})",
+          "legendFormat": "{{job}}",
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "refId": "A"
+        }
+      ],
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "options": {}
+    },
+    {
+      "type": "logs",
+      "title": "Error logs",
+      "id": 6,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 12,
+        "w": 12,
+        "h": 8,
+        "y": 16
+      },
+      "targets": [
+        {
+          "expr": "{service_name=~\".+-agent\"} | severity_text=\"ERROR\"",
+          "datasource": {
+            "uid": "loki",
+            "type": "loki"
+          },
+          "refId": "A"
+        }
+      ],
+      "datasource": {
+        "uid": "loki",
+        "type": "loki"
+      },
+      "options": {}
+    }
+  ],
+  "time": {
+    "to": "now",
+    "from": "now-15m"
+  },
+  "schemaVersion": 39,
+  "refresh": "10s",
+  "title": "Spring services (OTel Java agent)"
+}
