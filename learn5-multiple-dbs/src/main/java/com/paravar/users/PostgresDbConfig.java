@@ -1,10 +1,10 @@
 package com.paravar.users;
 
 import lombok.AllArgsConstructor;
-import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
+import org.springframework.boot.jpa.autoconfigure.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.boot.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -53,7 +53,7 @@ public class PostgresDbConfig {
         vendorAdapter.setShowSql(postgresJpaProperties.isShowSql()); // Set show-sql explicitly
 
         EntityManagerFactoryBuilder builder = new EntityManagerFactoryBuilder(
-                vendorAdapter, postgresJpaProperties.getProperties(), null);
+                vendorAdapter, dataSource -> postgresJpaProperties.getProperties(), null); // Boot 4 takes per-DataSource properties
 
         return builder
                 .dataSource(postgresDataSource)

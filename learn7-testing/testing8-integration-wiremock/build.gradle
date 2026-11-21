@@ -1,6 +1,6 @@
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     testImplementation 'com.github.tomakehurst:wiremock-jre8-standalone:2.35.0'
    //    testImplementation 'org.wiremock:wiremock'
-
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 }

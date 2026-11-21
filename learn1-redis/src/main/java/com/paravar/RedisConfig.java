@@ -1,8 +1,5 @@
 package com.paravar;
 
-import com.redis.lettucemod.RedisModulesClient;
-import com.redis.lettucemod.api.StatefulRedisModulesConnection;
-import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
@@ -53,11 +50,6 @@ public class RedisConfig {
         template.setEnableTransactionSupport(true);
         template.afterPropertiesSet();
         return template;
-    }
-
-    @Bean
-    public <K, V> RedisModulesCommands<K, V> redisModulesCommands(StatefulRedisModulesConnection<K, V> connection){
-        return connection.sync();
     }
 
 }

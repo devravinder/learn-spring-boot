@@ -1,7 +1,5 @@
 package com.paravar.others;
 
-import com.redis.lettucemod.api.sync.RedisModulesCommands;
-import com.redis.lettucemod.timeseries.*;
 import io.lettuce.core.RedisCommandExecutionException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.geo.Distance;
@@ -11,13 +9,17 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.connection.stream.*;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import com.redis.lettucemod.api.StatefulRedisModulesConnection;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -332,41 +334,42 @@ class RedisTimeSeriesService {
         * RedisTimeSeries allows the storage and querying of time-series data with aggregation, downsampling, etc.
         * used along with the data that changes over a time period
     * */
-    private final RedisModulesCommands<String, String> commands;
+    // Lettuce 7 has no TimeSeries API, so we send raw TS.* commands
+    private final StringRedisTemplate redisTemplate;
+
+    private Object ts(String command, String... args) {
+        byte[][] raw = Arrays.stream(args).map(a -> a.getBytes(StandardCharsets.UTF_8)).toArray(byte[][]::new);
+        return redisTemplate.execute((RedisCallback<Object>) connection -> connection.execute(command, raw));
+    }
+
+    private static String cause(DataAccessException e) {
+        return String.valueOf(e.getMostSpecificCause().getMessage());
+    }
 
     public void createTimeSeries(String key, Map<String, String> labels) {
         try {
-
-            CreateOptions<String, String> options = CreateOptions.<String, String>builder()
-                    .labels(labels)
-                    .build();
-
-            commands.tsCreate(key, options);
+            // TS.CREATE key LABELS k1 v1 k2 v2 ...
+            List<String> args = new ArrayList<>(List.of(key, "LABELS"));
+            labels.forEach((k, v) -> { args.add(k); args.add(v); });
+            ts("TS.CREATE", args.toArray(String[]::new));
             System.out.println("Created time series: " + key);
-        } catch (RedisCommandExecutionException e) {
-            if (e.getCause().getMessage().contains("TSDB: key already exists")) {
+        } catch (DataAccessException e) {
+            if (cause(e).contains("TSDB: key already exists")) {
                 System.out.println("Time series already exists");
             } else {
-                System.out.println("Error creating time series: " + e.getMessage());
+                System.out.println("Error creating time series: " + cause(e));
                 throw new RuntimeException("Failed to create time series", e);
             }
-
         }
     }
 
     public void addDataPoint(String key, double value) {
-        try {
-            commands.tsAdd(key, Sample.of(System.currentTimeMillis(), value));
-            System.out.println("Added data point to " + key + ": " + value);
-        } catch (Exception e) {
-            System.out.println("Error adding data point: " + e.getMessage());
-            throw new RuntimeException("Failed to add data point", e);
-        }
+        addDataPointWithTimestamp(key, System.currentTimeMillis(), value);
     }
 
     public void addDataPointWithTimestamp(String key, long timestamp, double value) {
         try {
-            commands.tsAdd(key, Sample.of(timestamp, value));
+            ts("TS.ADD", key, Long.toString(timestamp), Double.toString(value));
             System.out.println("Added data point to " + key + " at " + timestamp + ": " + value);
         } catch (Exception e) {
             System.out.println("Error adding data point with timestamp: " + e.getMessage());
@@ -376,16 +379,17 @@ class RedisTimeSeriesService {
 
     public List<Sample> getRange(String key, long fromTimestamp, long toTimestamp) {
         try {
-            TimeRange timeRange = TimeRange.from(fromTimestamp).to(toTimestamp).build();
-
-
-            // Create RangeOptions object with various configurations
-            RangeOptions rangeOptions = RangeOptions.builder()
-                    .count(100)           // Limit results to 100 samples
-                    .aggregation(new Aggregation(Aggregator.AVG, Duration.ofSeconds(60)))
-                    // 1-minute aggregation using average
-                    .build();
-            return commands.tsRange(key, timeRange, rangeOptions);
+            // at most 100 samples, 1-minute buckets averaged
+            Object reply = ts("TS.RANGE", key, Long.toString(fromTimestamp), Long.toString(toTimestamp),
+                    "COUNT", "100", "AGGREGATION", "avg", "60000");
+            List<Sample> samples = new ArrayList<>();
+            for (Object row : (List<?>) reply) {
+                List<?> pair = (List<?>) row; // [timestamp, value-as-bytes]
+                long timestamp = ((Number) pair.get(0)).longValue();
+                double value = Double.parseDouble(new String((byte[]) pair.get(1), StandardCharsets.UTF_8));
+                samples.add(new Sample(timestamp, value));
+            }
+            return samples;
         } catch (Exception e) {
             System.out.println("Error getting range: " + e.getMessage());
             throw new RuntimeException("Failed to get range", e);
@@ -395,19 +399,15 @@ class RedisTimeSeriesService {
     // Example of creating a rule for downsampling
     public void createAggregationRule(String sourceKey, String destinationKey, long timeBucket) {
         try {
-            CreateRuleOptions options = CreateRuleOptions.builder(Aggregator.AVG).bucketDuration(Duration.of(timeBucket, ChronoUnit.MILLIS)).build();
-            commands.tsCreaterule(sourceKey, destinationKey, options);
+            ts("TS.CREATERULE", sourceKey, destinationKey, "AGGREGATION", "avg", Long.toString(timeBucket));
             System.out.println("Created aggregation rule from " + sourceKey + " to " + destinationKey);
-        } catch (RedisCommandExecutionException e) {
-            if (e.getCause().getMessage().contains("the destination key already has")) {
+        } catch (DataAccessException e) {
+            if (cause(e).contains("the destination key already has")) {
                 System.out.println("Aggregation rule already exists");
             } else {
-                System.out.println("Error creating aggregation rule: " + e.getMessage());
+                System.out.println("Error creating aggregation rule: " + cause(e));
                 throw new RuntimeException("Failed to create aggregation rule", e);
             }
         }
     }
 }
-
-
-

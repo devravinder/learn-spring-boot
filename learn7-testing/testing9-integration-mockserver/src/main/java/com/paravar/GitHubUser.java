@@ -19,9 +19,10 @@ public class GitHubUser {
 	private String bio;
 	@JsonProperty("twitter_username")
 	private String twitterUsername;
+	// Jackson 3 fails on missing primitives by default; wrappers allow absent fields
 	@JsonProperty("public_repos")
-	private int publicRepos;
-	private int followers;
-	private int following;
-	private boolean hireable;
+	private Integer publicRepos;
+	private Integer followers;
+	private Integer following;
+	private Boolean hireable;
 }

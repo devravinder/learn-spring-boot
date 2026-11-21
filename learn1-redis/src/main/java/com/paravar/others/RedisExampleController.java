@@ -1,6 +1,5 @@
 package com.paravar.others;
 
-import com.redis.lettucemod.timeseries.Sample;
 import lombok.AllArgsConstructor;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;

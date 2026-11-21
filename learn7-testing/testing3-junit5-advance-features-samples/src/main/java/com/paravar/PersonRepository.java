@@ -1,10 +1,12 @@
 package com.paravar;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class PersonRepository {
-    private static final Map<Long, Person> PERSON_DB = new HashMap<>();
+    // test classes run in parallel (junit-platform.properties), so the shared map must be thread-safe
+    private static final Map<Long, Person> PERSON_DB = new ConcurrentHashMap<>();
     private static final AtomicLong ID_GENERATOR = new AtomicLong(0L);
 
     public Person create(Person person) {

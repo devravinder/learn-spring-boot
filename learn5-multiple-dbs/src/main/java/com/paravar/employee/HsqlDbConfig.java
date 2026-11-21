@@ -3,10 +3,10 @@ package com.paravar.employee;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
+import org.springframework.boot.jpa.autoconfigure.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.boot.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -27,7 +27,7 @@ import javax.sql.DataSource;
 @Slf4j
 public class HsqlDbConfig {
 
-    public static final String PACKAGE_NAME =  "com.paravar.employees";
+    public static final String PACKAGE_NAME =  "com.paravar.employee";
     public static final String DATASOURCE_PREFIX = "spring.datasource.hsqldb";
     public static final String PERSISTENCE_UNIT_ID ="hsqldb";
     public static final String ENTITY_MANAGER_FACTORY_REF = "hsqldbEntityManagerFactory"; // bean & method name
@@ -55,7 +55,7 @@ public class HsqlDbConfig {
         vendorAdapter.setShowSql(hsqldbJpaProperties.isShowSql()); // Set show-sql explicitly
 
         EntityManagerFactoryBuilder builder = new EntityManagerFactoryBuilder(
-                vendorAdapter, hsqldbJpaProperties.getProperties(), null);
+                vendorAdapter, dataSource -> hsqldbJpaProperties.getProperties(), null); // Boot 4 takes per-DataSource properties
 
         return builder
                 .dataSource(hsqldbDataSource)

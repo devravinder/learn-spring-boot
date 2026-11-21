@@ -24,8 +24,10 @@
    - we are sending the logs using `micrometer-registry-prometheus` to `prometheus`
    
  - Tracing
-   - we are generating tracings using `micrometer-tracing-bridge-otel`
-     - and pushing them to `tempo` using `opentelemetry-exporter-zipkin`
+   - we are generating tracings using `micrometer-tracing-bridge-brave` ( via `spring-boot-starter-zipkin` )
+     - and pushing them to `tempo` in zipkin format
+     - Boot 4 dropped the OTel Zipkin exporter, so we switched from `bridge-otel` to `brave`
+     - OTLP ( the OpenTelemetry way ) will be covered in `observe3-otel-lgtm`
 
 
 ## 

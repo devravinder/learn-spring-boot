@@ -1,4 +1,9 @@
 spring:
+  servlet:
+    encoding:  # Boot 4 moved this from server.servlet.encoding
+      charset: UTF-8
+      enabled: true
+      force: true
 
 app:
   jwt:
@@ -8,11 +13,6 @@ app:
 
 server:
   port: 8080
-  servlet:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
 
 
 logging:

@@ -1,7 +1,7 @@
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.testcontainers:junit-jupiter'
-    testImplementation 'org.testcontainers:mockserver'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+    testImplementation 'org.testcontainers:testcontainers-mockserver'
     testImplementation 'org.mock-server:mockserver-netty:5.15.0'
-
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 }
