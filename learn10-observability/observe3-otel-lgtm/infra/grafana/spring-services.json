@@ -1,0 +1,209 @@
+{
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "refresh": "10s",
+  "uid": "spring-otlp",
+  "schemaVersion": 39,
+  "title": "Spring services (OTLP)",
+  "panels": [
+    {
+      "title": "Requests per second",
+      "id": 1,
+      "type": "timeseries",
+      "options": {},
+      "targets": [
+        {
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "legendFormat": "{{job}}",
+          "refId": "A",
+          "expr": "sum by (job) (rate(http_server_requests_milliseconds_count[1m]))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "gridPos": {
+        "w": 12,
+        "y": 0,
+        "x": 0,
+        "h": 8
+      }
+    },
+    {
+      "title": "p95 latency",
+      "id": 2,
+      "type": "timeseries",
+      "options": {},
+      "targets": [
+        {
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "legendFormat": "{{job}}",
+          "refId": "A",
+          "expr": "histogram_quantile(0.95, sum by (job, le) (rate(http_server_requests_milliseconds_bucket[1m])))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "gridPos": {
+        "w": 12,
+        "y": 0,
+        "x": 12,
+        "h": 8
+      }
+    },
+    {
+      "title": "Server errors (5xx) per second",
+      "id": 3,
+      "type": "timeseries",
+      "options": {},
+      "targets": [
+        {
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "legendFormat": "{{job}} {{uri}}",
+          "refId": "A",
+          "expr": "sum by (job, uri) (rate(http_server_requests_milliseconds_count{status=~\"5..\"}[1m]))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "gridPos": {
+        "w": 12,
+        "y": 8,
+        "x": 0,
+        "h": 8
+      }
+    },
+    {
+      "title": "Orders created / failed per minute",
+      "id": 4,
+      "type": "timeseries",
+      "options": {},
+      "targets": [
+        {
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "legendFormat": "{{product}}{{reason}}",
+          "refId": "A",
+          "expr": "sum by (product) (increase(orders_created_total[1m])) or sum by (reason) (increase(orders_failed_total[1m]))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "gridPos": {
+        "w": 12,
+        "y": 8,
+        "x": 12,
+        "h": 8
+      }
+    },
+    {
+      "title": "JVM heap used",
+      "id": 5,
+      "type": "timeseries",
+      "options": {},
+      "targets": [
+        {
+          "datasource": {
+            "uid": "prometheus",
+            "type": "prometheus"
+          },
+          "legendFormat": "{{job}}",
+          "refId": "A",
+          "expr": "sum by (job) (jvm_memory_used_bytes{area=\"heap\"})"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "datasource": {
+        "uid": "prometheus",
+        "type": "prometheus"
+      },
+      "gridPos": {
+        "w": 12,
+        "y": 16,
+        "x": 0,
+        "h": 8
+      }
+    },
+    {
+      "title": "Error logs",
+      "id": 6,
+      "type": "logs",
+      "options": {},
+      "targets": [
+        {
+          "datasource": {
+            "uid": "loki",
+            "type": "loki"
+          },
+          "refId": "A",
+          "expr": "{service_name=~\"order-service|product-service\"} | severity_text=\"ERROR\""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "datasource": {
+        "uid": "loki",
+        "type": "loki"
+      },
+      "gridPos": {
+        "w": 12,
+        "y": 16,
+        "x": 12,
+        "h": 8
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+@orders = http://localhost:8111
+@products = http://localhost:8112
+
+### happy path (customer-id travels as baggage)
+POST {{orders}}/orders
+Content-Type: application/json
+customer-id: c-42
+
+{"productId": "p1", "quantity": 2}
+
+### slow downstream (800 ms span in product-service)
+POST {{orders}}/orders
+Content-Type: application/json
+customer-id: c-42
+
+{"productId": "slow", "quantity": 1}
+
+### downstream 500 -> 502, error log + orders.failed
+POST {{orders}}/orders
+Content-Type: application/json
+
+{"productId": "broken", "quantity": 1}
+
+### product-service directly
+GET {{products}}/products/p2
+
+### PromQL through the exposed Prometheus API
+GET http://localhost:9090/api/v1/query?query=orders_created_total

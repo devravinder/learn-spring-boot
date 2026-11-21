@@ -1,0 +1,10 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <!-- ships every log record over OTLP, with trace and span ids attached -->
+    <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
+        <captureMdcAttributes>customer-id</captureMdcAttributes>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="OTEL"/>
+    </root>
+</configuration>

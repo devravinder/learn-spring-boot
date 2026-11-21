@@ -7,7 +7,7 @@ One commit per task, made once its checks pass.
 | 0   | Upgrade the repo to Spring Boot 4.2.0 + Java 21             | done    |
 | 1   | `learn11-actuator/actuator1-custom-metrics`                 | done    |
 | 2   | `learn11-actuator/actuator2-advanced-config`                | done    |
-| 3   | `learn10-observability/observe3-otel-lgtm` (Micrometer + OTLP) | planned |
+| 3   | `learn10-observability/observe3-otel-lgtm` (Micrometer + OTLP) | done    |
 | 4   | `learn10-observability/observe4-otel-javaagent`             | planned |
 | 5   | `learn8-security/mfa/mfa1-totp`                             | planned |
 | 6   | `learn8-security/mfa/mfa2-email-ott`                        | planned |
@@ -21,7 +21,7 @@ One commit per task, made once its checks pass.
 | 14  | `learn13-rest-api/rest2-api-versioning`                     | planned |
 | 15  | `learn13-rest-api/rest3-http-interface-clients`             | planned |
 | 16  | `learn13-rest-api/rest4-openapi`                            | planned |
-| 17  | `learn14-data-jpa/data1-jpa-essentials`                     | planned |
+| 17  | `learn14-data-jpa/data1-jpa-essentials` (incl. cursor pagination) | planned |
 | 18  | Docs with Mermaid diagrams for the existing projects        | planned |
 
 ## Task 0: Boot 4 upgrade
@@ -52,3 +52,11 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] Build, env, java, os and custom info; custom `@Endpoint` with read, write and delete
 - [x] Runtime log levels, startup timeline, HTTP exchanges, masked secrets, shutdown
 - [x] 30 runtime checks; no renamed or deprecated keys reported by the properties migrator
+
+## Task 3: OTLP to otel-lgtm
+
+- [x] `spring-boot-starter-opentelemetry`: metrics, traces and logs over OTLP HTTP
+- [x] Trace across two services, baggage as header, span tag, MDC and log attribute
+- [x] Logs in Loki with `trace_id`; error logs; manual `Observation` span + timer
+- [x] Provisioned dashboard; every panel query checked against Prometheus
+- [x] 17 end-to-end checks against Prometheus, Tempo and Loki
