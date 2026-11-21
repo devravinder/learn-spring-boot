@@ -134,3 +134,36 @@ flowchart LR
 Gotcha: the group's default API version key is `apiversion.default`, not
 `apiversion.default-version`. The field is bound with `@Name("default")`, and
 there's no config metadata to warn you, so the wrong key is silently ignored.
+
+## rest4-openapi
+
+springdoc reads the controllers, the Bean Validation rules and a few
+annotations, then publishes an OpenAPI 3 document and a Swagger UI.
+
+| Concept               | Where                                                          | In the document                         |
+| --------------------- | -------------------------------------------------------------- | --------------------------------------- |
+| API info              | `OpenApiConfig.api()`                                          | `info.title`, `version`, `contact`, `license` |
+| Tags                  | `@Tag(name, description)`                                      | `tags[]`                                |
+| Operations            | `@Operation(summary, description)`                             | `paths.*.summary`                       |
+| Error responses       | `@ApiResponse(responseCode = "404", content = problem+json)`   | `ProblemDetail` schema                  |
+| Schemas               | records + `@Schema(example, accessMode)`                       | `components.schemas.Book`               |
+| Validation → schema   | `@NotBlank`, `@Size`, `@Pattern`, `@Min` / `@Max`              | `required`, `maxLength`, `pattern`, `maximum` |
+| Security              | `@SecurityScheme(bearerAuth)` + `@SecurityRequirement`         | `securitySchemes`, `security` per operation |
+| Hide internals        | `@Hidden`                                                      | not listed                              |
+| Groups                | `GroupedOpenApi` public / admin                                | `/v3/api-docs/public`, `/v3/api-docs/admin` |
+| UI                    | `springdoc.swagger-ui.path: /docs`                             | Swagger UI served from a webjar (local) |
+
+```mermaid
+flowchart LR
+  ctl["@RestController + @Operation / @ApiResponse"] --> sd[springdoc scanner]
+  rec["records + @Schema + Bean Validation"] --> sd
+  cfg["OpenAPI bean, @SecurityScheme, GroupedOpenApi"] --> sd
+  sd --> json["/v3/api-docs (+ .yaml, /public, /admin)"]
+  json --> ui["/docs: Swagger UI"]
+  json --> gen["client generators, contract tests, API gateways"]
+```
+
+Code first vs contract first: here the code is the source of truth and the
+document is generated. Contract first means writing `openapi.yaml` and
+generating interfaces from it. That suits APIs shared across teams. Code
+first is simpler when one team owns both sides.

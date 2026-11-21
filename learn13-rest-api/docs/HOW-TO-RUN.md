@@ -44,3 +44,20 @@ curl -s localhost:8143/shop/echo              # headers the client sent: API-Ver
 curl -s localhost:8143/shop/products/99       # upstream 404 -> our 404 problem
 curl -s 'localhost:8143/shop/slow?ms=2000'    # 504 after the 1 s read timeout
 ```
+
+## rest4-openapi
+
+```bash
+./gradlew :learn13-rest-api:rest4-openapi:bootRun
+```
+
+| Open                                         | What                                  |
+| -------------------------------------------- | ------------------------------------- |
+| <http://localhost:8144/docs>                 | Swagger UI; pick the group top right  |
+| <http://localhost:8144/v3/api-docs>          | the full OpenAPI 3 JSON               |
+| <http://localhost:8144/v3/api-docs.yaml>     | the same as YAML                      |
+| <http://localhost:8144/v3/api-docs/public>   | books only                            |
+| <http://localhost:8144/v3/api-docs/admin>    | admin only                            |
+
+In Swagger UI, "Authorize" accepts any bearer token. The scheme is documented
+but not enforced in this module.

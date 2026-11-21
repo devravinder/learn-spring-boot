@@ -20,7 +20,7 @@ One commit per task, made once its checks pass.
 | 13  | `learn13-rest-api/rest1-validation-problem-details`         | done    |
 | 14  | `learn13-rest-api/rest2-api-versioning`                     | done    |
 | 15  | `learn13-rest-api/rest3-http-interface-clients`             | done    |
-| 16  | `learn13-rest-api/rest4-openapi`                            | planned |
+| 16  | `learn13-rest-api/rest4-openapi`                            | done    |
 | 17  | `learn14-data-jpa/data1-jpa-essentials` (incl. cursor pagination) | planned |
 | 18  | Docs with Mermaid diagrams for the existing projects        | planned |
 
@@ -141,3 +141,9 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] `@HttpExchange` GET, POST, DELETE, path, query, header, `ResponseEntity`; `@ImportHttpServices` group
 - [x] Group base URL, timeouts, default header, API version insertion; status handler mapping 404
 - [x] 11 end-to-end checks against a local upstream
+
+## Task 16: OpenAPI
+
+- [x] Info, tags, operations, problem+json responses, schemas from records and Bean Validation
+- [x] Bearer security scheme per operation, `@Hidden`, public and admin groups, YAML, local Swagger UI
+- [x] 20 checks against the generated document

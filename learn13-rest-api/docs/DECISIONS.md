@@ -61,3 +61,15 @@
 - Decision: `CatalogUpstream` under `/upstream/catalog` plays the remote service.
 - Why: no outside requests, and nothing extra to start.
 - Rejected: a public API, which breaks the "all local" rule and makes tests flaky.
+
+## ADR-011: springdoc, code first
+
+- Decision: `springdoc-openapi-starter-webmvc-ui:3.2.1`, the line for Boot 4.
+- Why: the document follows the code, and validation rules show up in schemas automatically.
+- Rejected: hand-written `openapi.yaml` (contract first), which is mentioned in the README for shared APIs.
+
+## ADR-012: Document errors as `ProblemDetail`
+
+- Decision: every error response points to the `ProblemDetail` schema with
+  `application/problem+json`.
+- Why: it matches rest1's error format, so clients can generate one error type.

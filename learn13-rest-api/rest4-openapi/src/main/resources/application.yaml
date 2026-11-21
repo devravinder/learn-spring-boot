@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: rest4-openapi
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  port: 8144
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs # JSON; add .yaml for YAML
+  swagger-ui:
+    path: /docs # redirects to /swagger-ui/index.html
+    operations-sorter: method
+    try-it-out-enabled: true

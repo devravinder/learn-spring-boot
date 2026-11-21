@@ -1,0 +1,19 @@
+@b = http://localhost:8144
+
+### OpenAPI JSON
+GET {{b}}/v3/api-docs
+
+### OpenAPI YAML
+GET {{b}}/v3/api-docs.yaml
+
+### groups
+GET {{b}}/v3/api-docs/public
+
+###
+GET {{b}}/v3/api-docs/admin
+
+### Swagger UI (open in a browser)
+GET {{b}}/docs
+
+### the documented API itself
+GET {{b}}/api/books/1
