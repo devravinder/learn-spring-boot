@@ -42,3 +42,20 @@
   - Skipping MFA by IP address: shared networks and VPNs make that unsafe.
   - A server-side device table: better for "sign out all devices", but more
     code than the lesson needs.
+
+## ADR-007: Email link via the built-in OTT login
+
+- Decision: `@EnableMultiFactorAuthentication` + `oneTimeTokenLogin()` with a mail sender.
+- Why: shows the framework path with no custom security code, next to mfa1's custom factor.
+- Rejected: a hand-written email code flow. It would repeat mfa1.
+
+## ADR-008: Token request resolved from the signed-in user
+
+- Context: the default resolver trusts the `username` form field.
+- Decision: once a user has a session, use that name and ignore the field.
+- Why: otherwise a signed-in user could trigger links to other inboxes, which is spam at best.
+
+## ADR-009: MailHog for email
+
+- Decision: `mailhog/mailhog` on 1025 (SMTP) and 8025 (web and API).
+- Rejected: a real SMTP provider. That breaks the "nothing leaves the machine" rule.

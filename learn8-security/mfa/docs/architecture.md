@@ -49,3 +49,22 @@ stateDiagram-v2
   Locked --> Enrolled: after 5 minutes
   Enrolled --> NotEnrolled: turn off two-step login
 ```
+
+## mfa2-email-ott
+
+```mermaid
+sequenceDiagram
+  participant B as Browser
+  participant A as App (Security 7)
+  participant M as MailHog
+  B->>A: POST /login (alice, password)
+  A-->>B: 302 / then 302 /login?factor.type=ott&factor.reason=missing
+  B->>A: POST /ott/generate
+  Note over A: resolver uses the signed-in user, ttl 5 min
+  A->>M: SMTP: link /login/ott?token=...
+  A-->>B: 302 /ott/sent
+  B->>M: read mail (http://localhost:8025)
+  B->>A: GET /login/ott?token=... then POST /login/ott
+  Note over A: token consumed once, FACTOR_OTT added to FACTOR_PASSWORD
+  A-->>B: 302 / (both factors)
+```

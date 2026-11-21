@@ -1,0 +1,27 @@
+# Browser flow; these show each step. Copy _csrf from the previous HTML page.
+@base = http://localhost:8122
+@mailhog = http://localhost:8025
+
+### password step
+POST {{base}}/login
+Content-Type: application/x-www-form-urlencoded
+
+username=alice&password=password&_csrf={{csrf}}
+
+### missing OTT factor -> 302 /login?factor.type=ott&factor.reason=missing
+GET {{base}}/
+
+### send the email link
+POST {{base}}/ott/generate
+Content-Type: application/x-www-form-urlencoded
+
+username=alice&_csrf={{csrf}}
+
+### read the mail
+GET {{mailhog}}/api/v2/search?kind=to&query=alice@example.test
+
+### consume the token (factor 2)
+POST {{base}}/login/ott
+Content-Type: application/x-www-form-urlencoded
+
+token={{token}}&_csrf={{csrf}}

@@ -82,3 +82,22 @@ secret and the clock, so TOTP needs no third-party service.
 | Trusted device     | HMAC-signed, HttpOnly cookie for 30 days, bound to the user name        |
 
 Users: `alice / password` and `bob / password`.
+
+## mfa2-email-ott
+
+The built-in Security 7 path: no custom filter at all.
+
+| Concern            | How it's handled                                                          |
+| ------------------ | ------------------------------------------------------------------------- |
+| Rule               | `@EnableMultiFactorAuthentication(authorities = {PASSWORD, OTT})` on every authenticated request |
+| Second factor      | `oneTimeTokenLogin()`: `POST /ott/generate` makes a token, `/login/ott` consumes it |
+| Delivery           | `EmailLinkSender` (`OneTimeTokenGenerationSuccessHandler`) mails the link to MailHog |
+| Missing factor     | Spring redirects to `/login?factor.type=ott&factor.reason=missing` with the username pre-filled |
+| Who gets the link  | a custom `GenerateOneTimeTokenRequestResolver` uses the signed-in user and ignores the form |
+| Lifetime           | `mfa.ott-ttl` (5 minutes), single use (`InMemoryOneTimeTokenService`)     |
+| Order of factors   | either order works; the session holds both factors once both are done    |
+| User enumeration   | always redirects to `/ott/sent`, whether or not the user exists           |
+
+Email is a weaker factor than TOTP or passkeys. Anyone who controls the
+inbox (or a forwarding rule) gets the link. It's a common fallback, though, and it
+shows the framework's built-in flow.

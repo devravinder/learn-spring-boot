@@ -10,7 +10,7 @@ One commit per task, made once its checks pass.
 | 3   | `learn10-observability/observe3-otel-lgtm` (Micrometer + OTLP) | done    |
 | 4   | `learn10-observability/observe4-otel-javaagent`             | done    |
 | 5   | `learn8-security/mfa/mfa1-totp`                             | done    |
-| 6   | `learn8-security/mfa/mfa2-email-ott`                        | planned |
+| 6   | `learn8-security/mfa/mfa2-email-ott`                        | done    |
 | 7   | `learn8-security/mfa/mfa3-passkeys`                         | planned |
 | 8   | `learn8-security/mfa/mfa4-step-up`                          | planned |
 | 9   | `learn8-security/mfa/mfa5-keycloak-otp`                     | planned |
@@ -74,3 +74,10 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] `FACTOR_TOTP` as a Security 7 factor; `multiFactor()` rule; missing-factor entry point
 - [x] Enrollment, encrypted secret, recovery codes, replay protection, lockout, trusted device, session rotation
 - [x] 25 end-to-end checks with real CSRF form posts and computed codes
+
+## Task 6: email one-time link
+
+- [x] `@EnableMultiFactorAuthentication` with `FACTOR_PASSWORD` + `FACTOR_OTT`
+- [x] `oneTimeTokenLogin()` with a mail sender to MailHog; resolver bound to the signed-in user
+- [x] Single use, expiry, either factor order, link alone is not enough
+- [x] 13 end-to-end checks reading the MailHog API

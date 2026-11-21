@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: mfa2-email-ott
+  mail:
+    host: localhost
+    port: 1025 # MailHog SMTP
+
+server:
+  port: 8122
+
+mfa:
+  base-url: http://localhost:8122
+  ott-ttl: 5m # how long an emailed link stays valid

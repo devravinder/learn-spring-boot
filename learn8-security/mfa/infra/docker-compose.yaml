@@ -1,0 +1,10 @@
+name: learn-mfa
+
+services:
+  mailhog:
+    # catches every email locally; nothing is delivered to the internet
+    image: mailhog/mailhog:latest
+    container_name: mfa-mailhog
+    ports:
+      - "1025:1025" # SMTP for the apps
+      - "8025:8025" # web inbox + JSON API
