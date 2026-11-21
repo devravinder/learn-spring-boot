@@ -1,0 +1,29 @@
+@flaky = http://localhost:8131
+@app = http://localhost:8132
+
+### reset chaos
+POST {{flaky}}/chaos/reset
+
+### fail the next 2 calls
+POST {{flaky}}/chaos
+Content-Type: application/json
+
+{"failRate": 0, "failNext": 2, "latencyMs": 0, "status": 503}
+
+### retried price lookup (attempts in the reply)
+GET {{app}}/prices/p1
+
+### 404 is never retried
+GET {{app}}/prices/missing
+
+### payment with idempotency key (try after failNext with status 502)
+POST {{app}}/payments?amount=500
+
+### bulkhead: 6 calls, at most 2 in flight
+GET {{app}}/bulkhead?n=6&mode=block
+
+### bulkhead: reject extra callers
+GET {{app}}/bulkhead?n=5&mode=reject
+
+### downstream view
+GET {{flaky}}/chaos/stats

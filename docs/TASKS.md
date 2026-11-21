@@ -14,7 +14,7 @@ One commit per task, made once its checks pass.
 | 7   | `learn8-security/mfa/mfa3-passkeys`                         | done    |
 | 8   | `learn8-security/mfa/mfa4-step-up`                          | done    |
 | 9   | `learn8-security/mfa/mfa5-keycloak-otp`                     | done    |
-| 10  | `learn12-resilience`: flaky service + Spring core retry     | planned |
+| 10  | `learn12-resilience`: flaky service + Spring core retry     | done    |
 | 11  | `learn12-resilience/resilience2-resilience4j`               | planned |
 | 12  | `learn12-resilience/resilience3-cap-theorem`                | planned |
 | 13  | `learn13-rest-api/rest1-validation-problem-details`         | planned |
@@ -99,3 +99,10 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] Realm as code: client with PKCE, OTP policy, brute-force protection, `CONFIGURE_TOTP`
 - [x] `oauth2Login()` from `issuer-uri`; RP-initiated logout
 - [x] 13 browser checks: OTP setup, OTP login, wrong code, code reuse, logout
+
+## Task 10: Spring core resilience
+
+- [x] `flaky-service` with runtime chaos switches and downstream stats
+- [x] Timeouts, `@Retryable` with backoff and jitter, 4xx not retried, `RetryTemplate` + listener
+- [x] Idempotency key for a lost reply; `@ConcurrencyLimit` BLOCK and REJECT
+- [x] 12 end-to-end checks against the downstream stats

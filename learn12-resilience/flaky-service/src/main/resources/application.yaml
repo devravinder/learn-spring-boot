@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: flaky-service
+
+server:
+  port: 8131
+  tomcat:
+    threads:
+      max: 50

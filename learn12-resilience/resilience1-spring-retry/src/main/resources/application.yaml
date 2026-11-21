@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: resilience1-spring-retry
+
+server:
+  port: 8132
+
+flaky:
+  base-url: http://localhost:8131
+  read-timeout: 1s # a slower reply counts as a failure and may be retried
