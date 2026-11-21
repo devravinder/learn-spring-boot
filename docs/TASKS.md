@@ -21,7 +21,7 @@ One commit per task, made once its checks pass.
 | 14  | `learn13-rest-api/rest2-api-versioning`                     | done    |
 | 15  | `learn13-rest-api/rest3-http-interface-clients`             | done    |
 | 16  | `learn13-rest-api/rest4-openapi`                            | done    |
-| 17  | `learn14-data-jpa/data1-jpa-essentials` (incl. cursor pagination) | planned |
+| 17  | `learn14-data-jpa/data1-jpa-essentials` (incl. cursor pagination) | done    |
 | 18  | Docs with Mermaid diagrams for the existing projects        | planned |
 
 ## Task 0: Boot 4 upgrade
@@ -147,3 +147,12 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] Info, tags, operations, problem+json responses, schemas from records and Bean Validation
 - [x] Bearer security scheme per operation, `@Hidden`, public and admin groups, YAML, local Swagger UI
 - [x] 20 checks against the generated document
+
+## Task 17: JPA essentials and cursor pagination
+
+- [x] N+1 (21 statements) vs JOIN FETCH and `@EntityGraph` (1); interface, DTO and dynamic projections
+- [x] Offset `Page` (rows + count), `Slice` (no count), cursor `Window` (keyset, opaque token, `price, id` tie-breaker)
+- [x] Insert while paging: offset repeats a row, cursor does not
+- [x] Auditing, `@Version`; optimistic vs pessimistic vs atomic under 20 parallel requests
+- [x] Rollback rules, `REQUIRES_NEW`, the checked-exception trap
+- [x] 27 end-to-end checks with recorded SQL

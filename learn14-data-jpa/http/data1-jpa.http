@@ -1,0 +1,55 @@
+@b = http://localhost:8151
+
+### N+1 (sqlCount 21)
+GET {{b}}/queries/n-plus-one
+
+### JOIN FETCH (1)
+GET {{b}}/queries/fetch-join
+
+### @EntityGraph (1)
+GET {{b}}/queries/entity-graph
+
+### interface projection (2 columns)
+GET {{b}}/queries/projection?maxPrice=200
+
+### DTO projection
+GET {{b}}/queries/dto?author=Author 3
+
+### offset page (rows + count)
+GET {{b}}/books/offset?page=2&size=10
+
+### slice (no count)
+GET {{b}}/books/slice?page=2&size=10
+
+### cursor: first page
+GET {{b}}/books/cursor?size=10
+
+### cursor: next page (paste nextCursor)
+GET {{b}}/books/cursor?size=10&after={{cursor}}
+
+### insert a cheap row (sorts first) and page again
+POST {{b}}/books?title=Cheap&price=1
+
+### optimistic update: version and updatedAt change
+PUT {{b}}/books/5/price?price=999
+
+### stock strategies
+POST {{b}}/stock/10/reset?to=20
+
+###
+POST {{b}}/stock/10/optimistic
+
+###
+POST {{b}}/stock/10/pessimistic
+
+###
+POST {{b}}/stock/10/atomic
+
+### rollback + REQUIRES_NEW audit
+POST {{b}}/orders?bookId=20&fail=true
+
+### checked exception trap
+POST {{b}}/orders?bookId=20&mode=checked-default
+
+###
+GET {{b}}/audit

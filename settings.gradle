@@ -102,3 +102,5 @@ include 'learn13-rest-api:rest1-validation-problem-details'
 include 'learn13-rest-api:rest2-api-versioning'
 include 'learn13-rest-api:rest3-http-interface-clients'
 include 'learn13-rest-api:rest4-openapi'
+
+include 'learn14-data-jpa:data1-jpa-essentials'

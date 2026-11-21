@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: data1-jpa-essentials
+  datasource:
+    url: jdbc:h2:mem:library;DB_CLOSE_DELAY=-1
+  jpa:
+    open-in-view: false # no lazy loading in controllers; services decide what to fetch
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        session_factory:
+          statement_inspector: com.paravar.data.support.SqlRecorder
+
+server:
+  port: 8151
