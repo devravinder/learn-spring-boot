@@ -99,3 +99,26 @@ Use a short window so you don't have to wait two minutes:
 2. "Send money" works right away.
 3. Wait 20 seconds. The statement still works, but "Send money" asks for the password again.
 4. After you enter it, you're back on the transfer form, and the time on the statement has changed.
+
+## mfa5-keycloak-otp
+
+```bash
+docker compose -f learn8-security/mfa/infra/docker-compose.yaml up -d
+./gradlew :learn8-security:mfa:mfa5-keycloak-otp:bootRun
+```
+
+Keycloak takes about 30 seconds to start. It's ready when
+<http://localhost:8180/realms/learn/.well-known/openid-configuration> answers.
+The admin console is <http://localhost:8180> (`admin / admin`).
+
+1. Open <http://localhost:8125>. You're sent to the Keycloak login page.
+2. Sign in as `alice / password`. Keycloak asks you to set up an authenticator (scan the QR code).
+3. Enter the code. You're back in the app, which shows the ID token claims, including `acr`.
+4. Sign out (this ends the Keycloak session too), then sign in again: password, then OTP.
+
+The realm is imported from `infra/keycloak/learn-realm.json` on every start,
+and nothing is saved. Recreate the container to reset alice's OTP:
+
+```bash
+docker compose -f learn8-security/mfa/infra/docker-compose.yaml up -d --force-recreate keycloak
+```

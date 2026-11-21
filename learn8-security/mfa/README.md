@@ -137,3 +137,32 @@ Step-up authentication: a long session for reading, and a fresh proof for risky 
 The same rule works with any factor: `ottAuthority()`, `webauthnAuthority()`
 or a custom one like `FACTOR_TOTP`. "Ask for the passkey again before deleting
 the account" is one line.
+
+## mfa5-keycloak-otp
+
+Here the app delegates MFA to an identity provider. It never sees a password
+or an OTP. Keycloak runs both factors and returns an ID token.
+
+| Concern            | How it's handled                                                         |
+| ------------------ | ------------------------------------------------------------------------ |
+| Login              | `oauth2Login()` with `issuer-uri`; endpoints come from `.well-known/openid-configuration` |
+| Code flow security | Spring sends PKCE (`S256`) and a `nonce`; the client secret stays on the server |
+| MFA setup          | realm import gives alice the `CONFIGURE_TOTP` required action, so the first login shows a QR code |
+| OTP policy         | `otpPolicy*` in the realm: SHA1, 6 digits, 30 s, look-ahead 1, codes not reusable |
+| Brute force        | `bruteForceProtected: true`, `failureFactor: 5`                          |
+| Strength claim     | `acr` in the ID token; the app could require a level                     |
+| Logout             | `OidcClientInitiatedLogoutSuccessHandler` ends the Keycloak session too  |
+
+### Build it yourself (mfa1–mfa4) vs use an identity provider (mfa5)
+
+| Topic                  | In the app                            | Identity provider                           |
+| ---------------------- | ------------------------------------- | ------------------------------------------- |
+| Code you own           | factors, storage, lockout, recovery   | an OAuth2 client config                     |
+| Many apps, one login   | each app repeats MFA                  | single sign-on, MFA once                    |
+| New factor types       | write them                            | toggle in the admin console (OTP, passkeys, ...) |
+| Policy changes         | redeploy                              | change in the realm                         |
+| Extra moving part      | none                                  | the IdP must be up, upgraded and backed up  |
+| Custom UX              | full control                          | themes only                                 |
+
+Rule of thumb: one app with simple needs can build it. Several apps, or
+audit and compliance needs, usually justify an identity provider.

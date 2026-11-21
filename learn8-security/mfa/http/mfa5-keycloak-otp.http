@@ -1,0 +1,10 @@
+@keycloak = http://localhost:8180
+
+### discovery document the app reads at startup
+GET {{keycloak}}/realms/learn/.well-known/openid-configuration
+
+### signing keys used to verify the ID token
+GET {{keycloak}}/realms/learn/protocol/openid-connect/certs
+
+### app entry (302 to Keycloak with PKCE + nonce)
+GET http://localhost:8125/

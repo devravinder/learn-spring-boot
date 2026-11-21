@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="utf-8"><title>Home</title></head>
+<body>
+<h1>Hello <span id="user" th:text="${user}">user</span></h1>
+<p>acr: <code id="acr" th:text="${acr}">1</code></p>
+<h2>Authorities</h2>
+<ul id="authorities"><li th:each="a : ${authorities}" th:text="${a}">FACTOR</li></ul>
+<h2>ID token claims</h2>
+<table id="claims"><tr th:each="c : ${claims}"><td th:text="${c.key}">k</td><td th:text="${c.value}">v</td></tr></table>
+<form method="post" th:action="@{/logout}"><button>Sign out</button></form>
+</body>
+</html>

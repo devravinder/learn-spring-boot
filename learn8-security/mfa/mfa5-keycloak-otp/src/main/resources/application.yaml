@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: mfa5-keycloak-otp
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: mfa5-app
+            client-secret: ${MFA5_CLIENT_SECRET:mfa5-local-dev-secret}
+            scope: openid,profile
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/learn # endpoints discovered from .well-known
+
+server:
+  port: 8125

@@ -95,3 +95,24 @@
 - Decision: the rule covers `GET /transfer` as well as `POST`.
 - Why: the user re-authenticates before typing the details. A blocked POST
   can't be replayed after login, so the entered data would be lost.
+
+## ADR-015: Keycloak realm as code
+
+- Decision: `learn-realm.json` is imported by `start-dev --import-realm`. It
+  defines the client, the OTP policy, brute-force protection and alice with `CONFIGURE_TOTP`.
+- Rejected: clicking through the admin console, which nobody can repeat.
+
+## ADR-016: No `amr` claim
+
+- Context: Keycloak's AMR mapper only emits values when every step of the login
+  flow has an "authentication reference" configured. The default flow has none,
+  so the claim was `[]`.
+- Decision: show `acr` and the full claims table instead.
+- Rejected: copying and configuring the whole browser flow in the realm file.
+  It's a lot of JSON for one claim.
+
+## ADR-017: RP-initiated logout
+
+- Decision: `OidcClientInitiatedLogoutSuccessHandler`, so signing out ends the IdP session too.
+- Why: without it, the next login skips the password and OTP silently, because
+  the Keycloak session is still alive.

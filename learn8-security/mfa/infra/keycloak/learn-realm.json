@@ -1,0 +1,44 @@
+{
+  "realm": "learn",
+  "enabled": true,
+  "displayName": "learn-spring-boot",
+  "loginWithEmailAllowed": false,
+  "bruteForceProtected": true,
+  "failureFactor": 5,
+  "otpPolicyType": "totp",
+  "otpPolicyAlgorithm": "HmacSHA1",
+  "otpPolicyDigits": 6,
+  "otpPolicyPeriod": 30,
+  "otpPolicyLookAheadWindow": 1,
+  "otpPolicyCodeReusable": false,
+  "clients": [
+    {
+      "clientId": "mfa5-app",
+      "name": "mfa5 Spring app",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "mfa5-local-dev-secret",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["http://localhost:8125/login/oauth2/code/keycloak"],
+      "webOrigins": ["http://localhost:8125"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:8125/"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "email": "alice@example.test",
+      "emailVerified": true,
+      "firstName": "Alice",
+      "lastName": "Example",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "requiredActions": ["CONFIGURE_TOTP"]
+    }
+  ]
+}

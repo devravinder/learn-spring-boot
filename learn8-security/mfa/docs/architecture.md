@@ -117,3 +117,22 @@ stateDiagram-v2
     /login?factor.type=password&factor.reason=expired
   end note
 ```
+
+## mfa5-keycloak-otp
+
+```mermaid
+sequenceDiagram
+  participant B as Browser
+  participant A as Spring app (:8125)
+  participant K as Keycloak (:8180)
+  B->>A: GET /
+  A-->>B: 302 to K /auth?code_challenge=...&nonce=...
+  B->>K: username + password
+  K-->>B: OTP page (or QR setup on first login)
+  B->>K: 6-digit code
+  K-->>B: 302 to A /login/oauth2/code/keycloak?code=...
+  A->>K: POST /token (code + code_verifier + client secret)
+  K-->>A: ID token (acr), access token
+  Note over A: OidcUser in the session, no password or OTP seen by the app
+  A-->>B: 302 /
+```

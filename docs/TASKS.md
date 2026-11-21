@@ -13,7 +13,7 @@ One commit per task, made once its checks pass.
 | 6   | `learn8-security/mfa/mfa2-email-ott`                        | done    |
 | 7   | `learn8-security/mfa/mfa3-passkeys`                         | done    |
 | 8   | `learn8-security/mfa/mfa4-step-up`                          | done    |
-| 9   | `learn8-security/mfa/mfa5-keycloak-otp`                     | planned |
+| 9   | `learn8-security/mfa/mfa5-keycloak-otp`                     | done    |
 | 10  | `learn12-resilience`: flaky service + Spring core retry     | planned |
 | 11  | `learn12-resilience/resilience2-resilience4j`               | planned |
 | 12  | `learn12-resilience/resilience3-cap-theorem`                | planned |
@@ -93,3 +93,9 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] `RequiredFactor.validDuration` on `/transfer/**`; `issuedAt` shown to the user
 - [x] Expired factor redirect, re-auth returns to the saved request, other pages unaffected
 - [x] 10 end-to-end checks with a 5 s window
+
+## Task 9: MFA through Keycloak
+
+- [x] Realm as code: client with PKCE, OTP policy, brute-force protection, `CONFIGURE_TOTP`
+- [x] `oauth2Login()` from `issuer-uri`; RP-initiated logout
+- [x] 13 browser checks: OTP setup, OTP login, wrong code, code reuse, logout
