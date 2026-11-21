@@ -1,0 +1,40 @@
+@base = http://localhost:8101
+
+### place an order (counter, summary, timer)
+POST {{base}}/orders
+Content-Type: application/json
+
+{"product": "book", "paymentMethod": "upi", "amount": 300}
+
+### rejected order (counts shop.orders.failed)
+POST {{base}}/orders
+Content-Type: application/json
+
+{"product": "car", "paymentMethod": "cash", "amount": 200000}
+
+### invalid payment method (400, no metric)
+POST {{base}}/orders
+Content-Type: application/json
+
+{"product": "pen", "paymentMethod": "bitcoin", "amount": 10}
+
+### take stock (gauge goes down)
+POST {{base}}/inventory/book/take?units=3
+
+### restock (gauge up, function counter +1)
+POST {{base}}/inventory/book/restock?units=10
+
+### long running report (LongTaskTimer active for 30 s)
+POST {{base}}/reports?seconds=30
+
+### @Observed method
+GET {{base}}/recommendations/laptop
+
+### high-cardinality tag (capped at 20 series)
+POST {{base}}/visits/user-1
+
+### all shop meters, Prometheus format
+GET {{base}}/actuator/prometheus
+
+### one metric with a tag filter
+GET {{base}}/actuator/metrics/shop.orders.placed?tag=payment.method:upi

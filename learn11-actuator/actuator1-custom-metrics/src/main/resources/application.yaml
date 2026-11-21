@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: actuator1-custom-metrics
+
+server:
+  port: 8101
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  observations:
+    annotations:
+      enabled: true # turns on the aspects behind @Timed, @Counted and @Observed
+  metrics:
+    tags:
+      application: ${spring.application.name} # common tag on every meter
+      region: local
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      slo:
+        http.server.requests: 50ms,200ms

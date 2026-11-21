@@ -26,12 +26,12 @@ The module path is the folder path with `:` instead of `/`. See `settings.gradle
 
 ## Tips
 
-- **Port taken:** pass another port, for example
+- Port taken: pass another port, for example
   `./gradlew :learn9-sse:bootRun --args='--server.port=8090'`.
-- **Postgres says `invalid value for parameter "TimeZone"`:** some JVMs still
+- Postgres says `invalid value for parameter "TimeZone"`: some JVMs still
   report the old zone alias `Asia/Calcutta`. Run with
   `-Duser.timezone=Asia/Kolkata`.
-- **Renamed property?** Add
+- `Renamed property?` Add
   `runtimeOnly 'org.springframework.boot:spring-boot-properties-migrator'`
   temporarily. At startup it prints every renamed key and its replacement.
 

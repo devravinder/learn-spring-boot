@@ -69,7 +69,7 @@ Boot 4 uses Jackson 3 by default.
 - The static `OAuth2AuthorizationServerConfigurer.authorizationServer()` was
   removed. Use `new OAuth2AuthorizationServerConfigurer()` or
   `http.oauth2AuthorizationServer(...)`.
-- **PKCE is required by default** for the authorization-code grant. A request
+- `PKCE is required by default` for the authorization-code grant. A request
   without `code_challenge` is rejected with `invalid_request`. The Spring OAuth2
   client (`auth-client`) sends `code_challenge` + `S256` automatically. Plain
   curl tests must add it (see `HOW-TO-RUN.md`).
@@ -86,19 +86,19 @@ Found by running every app with `spring-boot-properties-migrator`.
 
 ## 5. Libraries that had to change
 
-- **observe1 tracing:** Boot 4 no longer manages `opentelemetry-exporter-zipkin`.
+- observe1 tracing: Boot 4 no longer manages `opentelemetry-exporter-zipkin`.
   We use `spring-boot-starter-zipkin` (Brave bridge) and still send Zipkin spans
   to Tempo. OTLP gets its own project (`observe3-otel-lgtm`).
-- **learn1 Redis TimeSeries:** `lettucemod` is built on Lettuce 6 and crashes on
+- learn1 Redis TimeSeries: `lettucemod` is built on Lettuce 6 and crashes on
   Lettuce 7 (`bfInfo` clash). Spring Data Redis 4 needs Lettuce 7, so we can't pin
   Lettuce 6 either. `RedisTimeSeriesService` now sends raw `TS.CREATE`, `TS.ADD`,
   `TS.RANGE` and `TS.CREATERULE` commands through `RedisCallback`.
-- **Testcontainers 2:** artifacts are `testcontainers-<module>`, and container
+- Testcontainers 2: artifacts are `testcontainers-<module>`, and container
   classes moved to `org.testcontainers.<module>` (for example
   `org.testcontainers.postgresql.PostgreSQLContainer`, no longer generic). The
   old Testcontainers could not talk to the current Docker Desktop API, so
   `testing5`, `testing6`, `testing7` and `testing9` now pass where they failed before.
-- **rest-assured** is no longer managed by Boot, so it's pinned to `6.3.0`.
+- `rest-assured` is no longer managed by Boot, so it's pinned to `6.3.0`.
 
 ## 6. Fixed along the way (not caused by the upgrade)
 

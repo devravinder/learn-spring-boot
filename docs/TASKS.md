@@ -2,14 +2,27 @@
 
 One commit per task, made once its checks pass.
 
-| #   | Task                                                 | Status  |
-| --- | ---------------------------------------------------- | ------- |
-| 0   | Upgrade the repo to Spring Boot 4.2.0 + Java 21      | done    |
-| 1   | `learn11-actuator`: custom metrics                   | planned |
-| 2   | `learn11-actuator`: advanced configuration           | planned |
-| 3   | `observe3-otel-lgtm`: Micrometer + OTLP to otel-lgtm | planned |
-| 4   | `observe3-otel-lgtm`: OpenTelemetry Java agent       | planned |
-| 5   | MFA series under `learn8-security` (all local)       | planned |
+| #   | Task                                                        | Status  |
+| --- | ----------------------------------------------------------- | ------- |
+| 0   | Upgrade the repo to Spring Boot 4.2.0 + Java 21             | done    |
+| 1   | `learn11-actuator/actuator1-custom-metrics`                 | done    |
+| 2   | `learn11-actuator/actuator2-advanced-config`                | planned |
+| 3   | `learn10-observability/observe3-otel-lgtm` (Micrometer + OTLP) | planned |
+| 4   | `learn10-observability/observe4-otel-javaagent`             | planned |
+| 5   | `learn8-security/mfa/mfa1-totp`                             | planned |
+| 6   | `learn8-security/mfa/mfa2-email-ott`                        | planned |
+| 7   | `learn8-security/mfa/mfa3-passkeys`                         | planned |
+| 8   | `learn8-security/mfa/mfa4-step-up`                          | planned |
+| 9   | `learn8-security/mfa/mfa5-keycloak-otp`                     | planned |
+| 10  | `learn12-resilience`: flaky service + Spring core retry     | planned |
+| 11  | `learn12-resilience/resilience2-resilience4j`               | planned |
+| 12  | `learn12-resilience/resilience3-cap-theorem`                | planned |
+| 13  | `learn13-rest-api/rest1-validation-problem-details`         | planned |
+| 14  | `learn13-rest-api/rest2-api-versioning`                     | planned |
+| 15  | `learn13-rest-api/rest3-http-interface-clients`             | planned |
+| 16  | `learn13-rest-api/rest4-openapi`                            | planned |
+| 17  | `learn14-data-jpa/data1-jpa-essentials`                     | planned |
+| 18  | Docs with Mermaid diagrams for the existing projects        | planned |
 
 ## Task 0: Boot 4 upgrade
 
@@ -18,6 +31,15 @@ One commit per task, made once its checks pass.
 - [x] Renamed properties fixed (properties migrator run on every app)
 - [x] `observe1` tracing via Brave + Zipkin, `learn1` TimeSeries via raw commands
 - [x] `clean build` green; runtime smoke checks on security, DB and OAuth2 modules
-- [ ] Runtime check of `learn1` TimeSeries against `redis-stack` (image not available yet)
+- [ ] Runtime check of `learn1` TimeSeries against a `redis-stack` image
 
 Details: [UPGRADE-BOOT-4.md](UPGRADE-BOOT-4.md). Decisions: [DECISIONS.md](DECISIONS.md).
+
+## Task 1: custom metrics
+
+- [x] Counter, DistributionSummary with SLOs, Timer with percentiles, Gauge, FunctionCounter, LongTaskTimer
+- [x] `@Timed`, `@Counted`, `@Observed` through `spring-boot-starter-aspectj`
+- [x] `MeterBinder`, common tags, `MeterFilter` deny, rename and tag cap
+- [x] 18 runtime checks against `/actuator/prometheus` and `/actuator/metrics`
+
+Docs: [learn11-actuator](../learn11-actuator/README.md).

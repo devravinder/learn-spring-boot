@@ -1,0 +1,8 @@
+{
+  "default": true,
+  "MD013": false, // long lines are fine in docs and tables
+  "MD033": false, // inline HTML (details/summary) allowed
+  "MD060": false, // table pipe spacing
+  "MD041": true, // first line is an H1
+  "MD040": true // code fences need a language
+}

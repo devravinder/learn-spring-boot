@@ -1,0 +1,5 @@
+{
+  // lint the curated docs; older free-form notes (info.md, HELP.md) are kept as-is
+  "globs": ["README.md", "docs/**/*.md", "learn*/**/README.md", "learn*/**/docs/**/*.md"],
+  "ignores": ["**/build/**", "**/src/**", "**/node_modules/**"]
+}
