@@ -32,3 +32,15 @@ curl -s  'localhost:8142/products/1?version=2.0'           # same, as a query pa
 curl -si localhost:8142/products -H 'API-Version: 1.0'     # 404: added in 1.1
 curl -s  localhost:8142/products/1 -H 'API-Version: 3.0'   # 400 problem
 ```
+
+## rest3-http-interface-clients
+
+```bash
+./gradlew :learn13-rest-api:rest3-http-interface-clients:bootRun
+curl -s localhost:8143/shop/products/1
+curl -s 'localhost:8143/shop/products?q=book&limit=1'
+curl -s -X POST localhost:8143/shop/products -H 'Content-Type: application/json' -d '{"name":"Pen","price":20}'
+curl -s localhost:8143/shop/echo              # headers the client sent: API-Version 2.0, X-Client rest3
+curl -s localhost:8143/shop/products/99       # upstream 404 -> our 404 problem
+curl -s 'localhost:8143/shop/slow?ms=2000'    # 504 after the 1 s read timeout
+```

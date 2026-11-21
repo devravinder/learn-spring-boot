@@ -1,0 +1,22 @@
+@b = http://localhost:8143
+
+### through the generated client
+GET {{b}}/shop/products/1
+
+### query params
+GET {{b}}/shop/products?q=book&limit=1
+
+### POST with body + Idempotency-Key header (set by the controller)
+POST {{b}}/shop/products
+Content-Type: application/json
+
+{"name": "Pen", "price": 20}
+
+### headers added by the group config
+GET {{b}}/shop/echo
+
+### upstream 404 mapped to a problem
+GET {{b}}/shop/products/99
+
+### read timeout -> 504
+GET {{b}}/shop/slow?ms=2000

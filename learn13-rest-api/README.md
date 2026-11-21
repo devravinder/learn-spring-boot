@@ -99,3 +99,38 @@ Versioning rules of thumb:
 - Bump the major version only for breaking changes (a renamed field, a type change, a removed endpoint).
 - Adding a field is not breaking. Clients must ignore unknown fields.
 - Announce removal with `Deprecation` and `Sunset` headers well before the date.
+
+## rest3-http-interface-clients
+
+Write a Java interface, and Spring generates the HTTP client.
+
+```java
+@HttpExchange("/upstream/catalog")
+public interface CatalogClient {
+    @GetExchange("/products/{id}") Product get(@PathVariable long id);
+    @PostExchange("/products") ResponseEntity<Product> create(@RequestBody NewProduct p, @RequestHeader("Idempotency-Key") String key);
+}
+```
+
+| Concept                  | Where                                                          |
+| ------------------------ | -------------------------------------------------------------- |
+| Register the client      | `@ImportHttpServices(group = "catalog", types = CatalogClient.class)` |
+| Per-group config         | `spring.http.serviceclient.catalog.*`: `base-url`, timeouts, `default-header` |
+| API version on requests  | `apiversion.default: 2.0` + `apiversion.insert.header: API-Version` |
+| Error mapping            | `RestClientHttpServiceGroupConfigurer` adds a status handler (404 → `NotFoundUpstreamException`) |
+| Status and headers       | return `ResponseEntity<T>` instead of `T`                      |
+| Timeouts                 | `read-timeout: 1s` → `ResourceAccessException` → 504 problem   |
+| Upstream                 | `CatalogUpstream` runs in the same app, so nothing leaves the machine |
+
+```mermaid
+flowchart LR
+  ctl[ShopController] --> proxy["CatalogClient (generated proxy)"]
+  proxy --> rc["RestClient for group catalog<br/>base-url, timeouts, X-Client, API-Version: 2.0"]
+  rc -->|HTTP| up["/upstream/catalog/** (CatalogUpstream)"]
+  rc -.->|404| ex[NotFoundUpstreamException] -.-> p404[404 problem]
+  rc -.->|timeout| p504[504 problem]
+```
+
+Gotcha: the group's default API version key is `apiversion.default`, not
+`apiversion.default-version`. The field is bound with `@Name("default")`, and
+there's no config metadata to warn you, so the wrong key is silently ignored.

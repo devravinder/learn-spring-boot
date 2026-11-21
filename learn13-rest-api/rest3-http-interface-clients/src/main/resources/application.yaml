@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: rest3-http-interface-clients
+  mvc:
+    problemdetails:
+      enabled: true
+  http:
+    serviceclient:
+      catalog: # matches @ImportHttpServices(group = "catalog")
+        base-url: http://localhost:8143 # the upstream controller lives in this app for the demo
+        connect-timeout: 1s
+        read-timeout: 1s
+        default-header:
+          X-Client: rest3
+        apiversion:
+          default: 2.0 # bound with @Name("default"), not default-version
+          insert:
+            header: API-Version # every request from this group carries the version
+
+server:
+  port: 8143

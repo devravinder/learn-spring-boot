@@ -19,7 +19,7 @@ One commit per task, made once its checks pass.
 | 12  | `learn12-resilience/resilience3-cap-theorem`                | done    |
 | 13  | `learn13-rest-api/rest1-validation-problem-details`         | done    |
 | 14  | `learn13-rest-api/rest2-api-versioning`                     | done    |
-| 15  | `learn13-rest-api/rest3-http-interface-clients`             | planned |
+| 15  | `learn13-rest-api/rest3-http-interface-clients`             | done    |
 | 16  | `learn13-rest-api/rest4-openapi`                            | planned |
 | 17  | `learn14-data-jpa/data1-jpa-essentials` (incl. cursor pagination) | planned |
 | 18  | Docs with Mermaid diagrams for the existing projects        | planned |
@@ -135,3 +135,9 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] Exact (`2.0`) and baseline (`1.0+`, `1.1+`) mappings
 - [x] Deprecation, Sunset and Link headers; 400 for unsupported versions
 - [x] 13 end-to-end checks
+
+## Task 15: HTTP interface clients
+
+- [x] `@HttpExchange` GET, POST, DELETE, path, query, header, `ResponseEntity`; `@ImportHttpServices` group
+- [x] Group base URL, timeouts, default header, API version insertion; status handler mapping 404
+- [x] 11 end-to-end checks against a local upstream

@@ -48,3 +48,16 @@
 
 - Decision: only endpoints that changed get a new mapping.
 - Rejected: copying every endpoint per version, which multiplies the code for no change.
+
+## ADR-009: HTTP interface clients over hand-written `RestClient` calls
+
+- Decision: `@HttpExchange` interfaces registered with `@ImportHttpServices`.
+- Why: the contract reads like the server's controller, it's easy to mock in
+  tests, and config is per group in properties.
+- Rejected: OpenFeign, an extra dependency that Spring now covers itself.
+
+## ADR-010: The upstream runs inside the same app
+
+- Decision: `CatalogUpstream` under `/upstream/catalog` plays the remote service.
+- Why: no outside requests, and nothing extra to start.
+- Rejected: a public API, which breaks the "all local" rule and makes tests flaky.
