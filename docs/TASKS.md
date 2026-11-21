@@ -9,7 +9,7 @@ One commit per task, made once its checks pass.
 | 2   | `learn11-actuator/actuator2-advanced-config`                | done    |
 | 3   | `learn10-observability/observe3-otel-lgtm` (Micrometer + OTLP) | done    |
 | 4   | `learn10-observability/observe4-otel-javaagent`             | done    |
-| 5   | `learn8-security/mfa/mfa1-totp`                             | planned |
+| 5   | `learn8-security/mfa/mfa1-totp`                             | done    |
 | 6   | `learn8-security/mfa/mfa2-email-ott`                        | planned |
 | 7   | `learn8-security/mfa/mfa3-passkeys`                         | planned |
 | 8   | `learn8-security/mfa/mfa4-step-up`                          | planned |
@@ -67,3 +67,10 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] Zero-code traces, semantic-convention metrics and logs; `@WithSpan` and the OTel metrics API
 - [x] Dashboard on semantic-convention names; comparison table against observe3
 - [x] 17 end-to-end checks; observe3 rechecked with the regenerated dashboard
+
+## Task 5: TOTP second factor
+
+- [x] RFC 6238 TOTP and Base32 by hand; QR code drawn locally
+- [x] `FACTOR_TOTP` as a Security 7 factor; `multiFactor()` rule; missing-factor entry point
+- [x] Enrollment, encrypted secret, recovery codes, replay protection, lockout, trusted device, session rotation
+- [x] 25 end-to-end checks with real CSRF form posts and computed codes

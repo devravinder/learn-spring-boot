@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="utf-8"><title>Home</title></head>
+<body>
+<h1>Hello <span th:text="${user}">user</span></h1>
+<p>Both factors done. Authorities on this session:</p>
+<ul id="factors"><li th:each="f : ${factors}" th:text="${f}">FACTOR</li></ul>
+<p>Recovery codes left: <b id="recovery-left" th:text="${recoveryLeft}">0</b></p>
+<form method="post" th:action="@{/account/mfa/disable}"><button>Turn off two-step login</button></form>
+<form method="post" th:action="@{/logout}"><button>Sign out</button></form>
+</body>
+</html>

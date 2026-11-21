@@ -1,0 +1,33 @@
+# mfa1-totp is a browser flow with CSRF tokens; use a browser for the full journey.
+# These requests show the redirects one step at a time.
+@base = http://localhost:8121
+
+### not signed in -> 302 /login
+GET {{base}}/
+
+### login page (copy _csrf from the form)
+GET {{base}}/login
+
+### sign in with the password (factor 1)
+POST {{base}}/login
+Content-Type: application/x-www-form-urlencoded
+
+username=alice&password=password&_csrf={{csrf}}
+
+### password only -> 302 /mfa/totp
+GET {{base}}/
+
+### first time -> 302 /mfa/enroll (QR + key)
+GET {{base}}/mfa/totp
+
+### confirm enrollment with a code from the app
+POST {{base}}/mfa/enroll
+Content-Type: application/x-www-form-urlencoded
+
+code=123456&_csrf={{csrf}}
+
+### factor 2 (code or recovery code), optionally trust the device
+POST {{base}}/mfa/totp
+Content-Type: application/x-www-form-urlencoded
+
+code=123456&trust=on&_csrf={{csrf}}

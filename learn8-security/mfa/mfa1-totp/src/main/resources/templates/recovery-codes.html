@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="utf-8"><title>Recovery codes</title></head>
+<body>
+<h1>Save your recovery codes</h1>
+<p>Each code works once if you lose your phone. They are shown only now.</p>
+<ul id="codes"><li th:each="c : ${codes}" th:text="${c}">0000-0000</li></ul>
+<a th:href="@{/mfa/totp}">Continue to verification</a>
+</body>
+</html>

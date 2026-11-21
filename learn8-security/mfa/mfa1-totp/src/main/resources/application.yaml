@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: mfa1-totp
+
+server:
+  port: 8121
+
+mfa:
+  # dev defaults; set MFA_ENCRYPTION_KEY and MFA_DEVICE_COOKIE_KEY outside local
+  encryption-key: ${MFA_ENCRYPTION_KEY:local-dev-only-encryption-key}
+  device-cookie-key: ${MFA_DEVICE_COOKIE_KEY:local-dev-only-device-cookie-key}

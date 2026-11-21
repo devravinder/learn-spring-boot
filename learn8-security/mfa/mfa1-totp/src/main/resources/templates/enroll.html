@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="utf-8"><title>Set up authenticator</title></head>
+<body>
+<h1>Set up your authenticator app</h1>
+<p th:if="${param.error}" id="error">That code did not match. Check the time on your phone and try again.</p>
+<p>Scan with Google Authenticator, Microsoft Authenticator, 1Password, ...</p>
+<img th:src="${qr}" alt="QR code" width="220" height="220">
+<p>Can't scan? Enter this key: <code id="secret" th:text="${secret}">SECRET</code></p>
+<form method="post" th:action="@{/mfa/enroll}">
+    <label>Code from the app <input name="code" autocomplete="one-time-code"></label>
+    <button>Confirm</button>
+</form>
+</body>
+</html>

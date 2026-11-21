@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="utf-8"><title>Two-step verification</title></head>
+<body>
+<h1>Two-step verification</h1>
+<p th:if="${param.error}" id="error" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION?.message}">Invalid code</p>
+<form method="post" th:action="@{/mfa/totp}">
+    <label>6-digit code or recovery code <input name="code" autocomplete="one-time-code" autofocus></label>
+    <label><input type="checkbox" name="trust"> Trust this device for 30 days</label>
+    <button>Verify</button>
+</form>
+</body>
+</html>
