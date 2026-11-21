@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: rest1-validation-problem-details
+  mvc:
+    problemdetails:
+      enabled: true # RFC 9457 bodies for errors raised before our handler (404 route, 405, 415)
+
+server:
+  port: 8141
+  error:
+    include-stacktrace: never
+    include-message: never

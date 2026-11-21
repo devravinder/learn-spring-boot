@@ -97,3 +97,5 @@ include 'learn12-resilience:flaky-service'
 include 'learn12-resilience:resilience1-spring-retry'
 include 'learn12-resilience:resilience2-resilience4j'
 include 'learn12-resilience:resilience3-cap-theorem'
+
+include 'learn13-rest-api:rest1-validation-problem-details'

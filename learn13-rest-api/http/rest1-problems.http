@@ -1,0 +1,44 @@
+@b = http://localhost:8141
+
+### valid create -> 201
+POST {{b}}/users
+Content-Type: application/json
+
+{"name": "Alice", "email": "alice@example.test", "age": 30, "password": "Str0ngPassword",
+ "confirmPassword": "Str0ngPassword", "address": {"city": "Pune", "pin": "411001"}}
+
+### every rule broken -> 400 problem with errors[]
+POST {{b}}/users
+Content-Type: application/json
+
+{"id": 5, "name": "", "email": "nope", "age": 12, "password": "weak", "confirmPassword": "other",
+ "address": {"city": "", "pin": "12"}}
+
+### same, French messages
+POST {{b}}/users
+Content-Type: application/json
+Accept-Language: fr
+
+{"name": "A", "email": "a@example.test", "age": 30, "password": "weak", "confirmPassword": "weak",
+ "address": {"city": "Pune", "pin": "12"}}
+
+### update group (id required, password rules off)
+PUT {{b}}/users/1
+Content-Type: application/json
+
+{"id": 1, "name": "Alice B", "email": "alice@example.test", "age": 31, "address": {"city": "Pune", "pin": "411001"}}
+
+### 404 problem with custom property
+GET {{b}}/users/99
+
+### method validation on path variable
+GET {{b}}/users/0
+
+### method validation on query param
+GET {{b}}/users?limit=500
+
+### 405 problem
+DELETE {{b}}/users/1
+
+### 500 problem with errorId only
+GET {{b}}/users/boom

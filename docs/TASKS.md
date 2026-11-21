@@ -17,7 +17,7 @@ One commit per task, made once its checks pass.
 | 10  | `learn12-resilience`: flaky service + Spring core retry     | done    |
 | 11  | `learn12-resilience/resilience2-resilience4j`               | done    |
 | 12  | `learn12-resilience/resilience3-cap-theorem`                | done    |
-| 13  | `learn13-rest-api/rest1-validation-problem-details`         | planned |
+| 13  | `learn13-rest-api/rest1-validation-problem-details`         | done    |
 | 14  | `learn13-rest-api/rest2-api-versioning`                     | planned |
 | 15  | `learn13-rest-api/rest3-http-interface-clients`             | planned |
 | 16  | `learn13-rest-api/rest4-openapi`                            | planned |
@@ -120,4 +120,11 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] Three replicas, partitions and heal; CP quorum vs AP local writes
 - [x] Lamport versions, last-write-wins with concurrent losers reported
 - [x] Replication lag (eventual consistency), `R + W > N`, `W = N`, PACELC latency
+- [x] 20 end-to-end checks
+
+## Task 13: validation and problem details
+
+- [x] Groups, custom and class-level constraints, nested `@Valid`, method validation, i18n messages
+- [x] RFC 9457 for validation, domain, framework (400, 404, 405, 415) and unexpected (500) errors
+- [x] `instance` filled by one advice; no internals leaked
 - [x] 20 end-to-end checks
