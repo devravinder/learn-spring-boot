@@ -79,3 +79,4 @@ include 'learn10-observability:observe2-elk-stack:product-service'
 include 'learn10-observability:observe2-elk-stack:order-service'
 
 include 'learn11-actuator:actuator1-custom-metrics'
+include 'learn11-actuator:actuator2-advanced-config'

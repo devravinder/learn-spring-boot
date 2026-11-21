@@ -6,7 +6,7 @@ One commit per task, made once its checks pass.
 | --- | ----------------------------------------------------------- | ------- |
 | 0   | Upgrade the repo to Spring Boot 4.2.0 + Java 21             | done    |
 | 1   | `learn11-actuator/actuator1-custom-metrics`                 | done    |
-| 2   | `learn11-actuator/actuator2-advanced-config`                | planned |
+| 2   | `learn11-actuator/actuator2-advanced-config`                | done    |
 | 3   | `learn10-observability/observe3-otel-lgtm` (Micrometer + OTLP) | planned |
 | 4   | `learn10-observability/observe4-otel-javaagent`             | planned |
 | 5   | `learn8-security/mfa/mfa1-totp`                             | planned |
@@ -43,3 +43,12 @@ Details: [UPGRADE-BOOT-4.md](UPGRADE-BOOT-4.md). Decisions: [DECISIONS.md](DECIS
 - [x] 18 runtime checks against `/actuator/prometheus` and `/actuator/metrics`
 
 Docs: [learn11-actuator](../learn11-actuator/README.md).
+
+## Task 2: actuator advanced configuration
+
+- [x] Separate management port and base path, exposure, read-only access by default
+- [x] `EndpointRequest` security chain, health details by role, CORS
+- [x] Custom `HealthIndicator`, readiness group, probes on the app port, maintenance mode
+- [x] Build, env, java, os and custom info; custom `@Endpoint` with read, write and delete
+- [x] Runtime log levels, startup timeline, HTTP exchanges, masked secrets, shutdown
+- [x] 30 runtime checks; no renamed or deprecated keys reported by the properties migrator

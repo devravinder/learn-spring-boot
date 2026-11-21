@@ -33,3 +33,25 @@ Drill down with the metrics endpoint:
 ```bash
 curl -s 'localhost:8101/actuator/metrics/shop.orders.placed?tag=payment.method:upi'
 ```
+
+## actuator2-advanced-config
+
+```bash
+./gradlew :learn11-actuator:actuator2-advanced-config:bootRun
+```
+
+The app runs on 8102 and actuator on 9102. Requests are in
+[../http/actuator2-config.http](../http/actuator2-config.http).
+
+| Try                                                                 | Expected                                   |
+| ------------------------------------------------------------------- | ------------------------------------------ |
+| `curl localhost:9102/manage/health`                                 | `{"status":"UP"}` with no details          |
+| `curl -u ops:ops localhost:9102/manage/health`                      | components, including `paymentGateway`     |
+| `curl -u dev:dev localhost:9102/manage/metrics`                     | `403`                                      |
+| `curl localhost:8102/manage/health`                                 | `404` (wrong port)                         |
+| `curl -X POST localhost:8102/api/payment-gateway/down`, then `/readyz` | `503`, while `/livez` stays `200`       |
+| `curl -X POST localhost:8102/api/maintenance/on`, then `/readyz`    | `503`                                      |
+| `curl -u ops:ops -X POST -H 'Content-Type: application/json' -d '{"enabled":true}' localhost:9102/manage/features/new-checkout` | flag on; `/api/checkout` returns `new` |
+| `curl -u ops:ops -X POST -H 'Content-Type: application/json' -d '{"configuredLevel":"DEBUG"}' localhost:9102/manage/loggers/com.paravar.ops` | `204`; DEBUG lines appear in the log |
+| `curl -u ops:ops localhost:9102/manage/env/app.payment.api-token`   | value `******`                             |
+| `curl -u ops:ops -X POST localhost:9102/manage/shutdown`            | the app stops                              |

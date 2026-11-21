@@ -1,0 +1,81 @@
+@app = http://localhost:8102
+@manage = http://localhost:9102/manage
+@ops = Basic b3BzOm9wcw==
+@dev = Basic ZGV2OmRldg==
+
+### public health (status only)
+GET {{manage}}/health
+
+### health with details (ops)
+GET {{manage}}/health
+Authorization: {{ops}}
+
+### probes on the app port
+GET {{app}}/readyz
+
+###
+GET {{app}}/livez
+
+### readiness group with the custom indicator
+GET {{manage}}/health/readiness
+Authorization: {{ops}}
+
+### simulate payment gateway outage
+POST {{app}}/api/payment-gateway/down
+
+### back up
+POST {{app}}/api/payment-gateway/up
+
+### maintenance mode (readiness REFUSING_TRAFFIC)
+POST {{app}}/api/maintenance/on
+
+###
+POST {{app}}/api/maintenance/off
+
+### info: build, env, java, os, custom contributor
+GET {{manage}}/info
+
+### wrong role -> 403
+GET {{manage}}/metrics
+Authorization: {{dev}}
+
+### custom endpoint: read all
+GET {{manage}}/features
+Authorization: {{ops}}
+
+### custom endpoint: write
+POST {{manage}}/features/new-checkout
+Authorization: {{ops}}
+Content-Type: application/json
+
+{"enabled": true}
+
+### app reads the flag
+GET {{app}}/api/checkout
+
+### custom endpoint: delete
+DELETE {{manage}}/features/dark-mode
+Authorization: {{ops}}
+
+### change log level at runtime
+POST {{manage}}/loggers/com.paravar.ops
+Authorization: {{ops}}
+Content-Type: application/json
+
+{"configuredLevel": "DEBUG"}
+
+### masked secret
+GET {{manage}}/env/app.payment.api-token
+Authorization: {{ops}}
+
+### startup timeline
+GET {{manage}}/startup
+Authorization: {{ops}}
+
+### last HTTP exchanges
+GET {{manage}}/httpexchanges
+Authorization: {{ops}}
+
+### graceful shutdown
+POST {{manage}}/shutdown
+Authorization: {{ops}}

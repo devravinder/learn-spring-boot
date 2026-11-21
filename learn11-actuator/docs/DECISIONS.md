@@ -26,3 +26,33 @@
 - Decision: `maximumAllowableTags("shop.visits", "user", 20, deny())` keeps the
   anti-pattern from blowing up the number of series.
 - Rejected: only documenting "don't tag with user ids". People forget.
+
+## ADR-005: Actuator on a separate management port
+
+- Decision: `management.server.port: 9102`, and probes copied to the app port
+  with `add-additional-paths`.
+- Why: the public load balancer only routes 8102, so `/manage/**` is never
+  public. Kubernetes still gets `/livez` and `/readyz` on the app port, which
+  checks that the app connector itself is accepting requests.
+- Rejected: one port with a path-based firewall rule. That's easy to get wrong.
+
+## ADR-006: Read-only by default, writes opted in per endpoint
+
+- Decision: `management.endpoints.access.default: read-only`, with
+  `unrestricted` only for `loggers`, `features` and `shutdown`.
+- Rejected: `include: "*"` with full access, where one leaked credential could
+  shut the app down or change config.
+
+## ADR-007: `EndpointRequest` matchers instead of path strings
+
+- Decision: a dedicated `SecurityFilterChain` matched with
+  `EndpointRequest.toAnyEndpoint()`.
+- Why: it follows `base-path` and port changes automatically.
+- Rejected: `requestMatchers("/manage/**")`, which breaks silently when the base path changes.
+
+## ADR-008: Secrets masked twice
+
+- Decision: `show-values: when-authorized`, plus a `SanitizingFunction` that
+  always masks keys containing `token`.
+- Rejected: `show-values: always`, which is convenient but leaks secrets to anyone
+  with actuator access.

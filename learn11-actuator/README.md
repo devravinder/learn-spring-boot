@@ -53,3 +53,31 @@ Things to notice:
   using `histogram_quantile` in PromQL.
 - In Prometheus output, a `LongTaskTimer` shows `_count` as the number of active
   tasks and `_sum` as their running time.
+
+## actuator2-advanced-config
+
+Actuator configured the way you would in production.
+
+| Topic             | Setting / code                                                        | Effect                                               |
+| ----------------- | --------------------------------------------------------------------- | ---------------------------------------------------- |
+| Separate port     | `management.server.port: 9102`                                        | `/manage/**` is not reachable on the app port 8102   |
+| Base path         | `management.endpoints.web.base-path: /manage`                         | `/manage/health` instead of `/actuator/health`       |
+| Exposure          | `include: "*"`, `exclude: heapdump`                                   | all endpoints except the heap dump                   |
+| Access levels     | `endpoints.access.default: read-only`, opt-in `unrestricted`          | only `loggers`, `features` and `shutdown` accept writes |
+| Security          | `SecurityConfig` with `EndpointRequest`                               | `health` and `info` public; the rest need role `ACTUATOR` |
+| Health details    | `show-details: when-authorized`                                       | `ops` sees components, anonymous users see only `UP` |
+| Custom health     | `PaymentGatewayHealthIndicator`                                       | `paymentGateway` component                           |
+| Probes            | `probes.enabled`, `add-additional-paths`                              | `/livez` and `/readyz` on the app port               |
+| Readiness group   | `group.readiness.include: readinessState,paymentGateway`              | a down dependency takes the pod out of the load balancer |
+| Availability      | `AvailabilityChangeEvent` in `OpsController`                          | maintenance mode: readiness 503, liveness 200        |
+| Info              | `buildInfo()`, `info.env`, `info.java`, `InfoContributor`             | version, team, JVM, OS and feature counts            |
+| Custom endpoint   | `FeaturesEndpoint` with read, write and delete operations             | feature flags at `/manage/features`                  |
+| Runtime log level | `POST /manage/loggers/com.paravar.ops`                                | DEBUG lines appear with no restart                   |
+| Secrets           | `show-values: when-authorized` + `SanitizingFunction`                 | `*token*` keys are always masked                     |
+| Startup           | `BufferingApplicationStartup`                                         | `/manage/startup` lists the slow startup steps       |
+| HTTP exchanges    | `InMemoryHttpExchangeRepository`                                      | last 50 requests at `/manage/httpexchanges`          |
+| Response cache    | `endpoint.beans.cache.time-to-live: 10s`                              | repeated `/beans` calls are served from cache        |
+| CORS              | `endpoints.web.cors.*`                                                | a dashboard on `localhost:3000` can call it          |
+| Shutdown          | `endpoint.shutdown.access: unrestricted`                              | `POST /manage/shutdown` as `ops` stops the app       |
+
+Users: `ops / ops` (role `ACTUATOR`) and `dev / dev` (role `USER`).

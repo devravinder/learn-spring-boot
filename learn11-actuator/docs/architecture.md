@@ -48,3 +48,43 @@ sequenceDiagram
   P->>R: GET /actuator/prometheus (scrape)
   R-->>P: text exposition format
 ```
+
+## actuator2-advanced-config
+
+Two ports, two security chains:
+
+```mermaid
+flowchart LR
+  user[Browser or API client] -->|":8102 /api/**"| app[App servlet context]
+  lb[Load balancer / Kubernetes] -->|":8102 /livez /readyz"| app
+  ops[Ops tooling] -->|":9102 /manage/**"| mgmt[Management context]
+  subgraph security[SecurityFilterChains]
+    c1["Order 1: EndpointRequest.toAnyEndpoint()<br/>health, info public<br/>others need ACTUATOR"]
+    c2["Order 2: everything else, permitAll"]
+  end
+  mgmt --> c1
+  app --> c2
+```
+
+Readiness vs liveness:
+
+```mermaid
+stateDiagram-v2
+  [*] --> Accepting: app started
+  Accepting --> Refusing: POST /api/maintenance/on
+  Accepting --> Refusing: paymentGateway DOWN
+  Refusing --> Accepting: maintenance off / gateway up
+  note right of Refusing
+    /readyz returns 503, so no new traffic is sent
+    /livez stays 200, so the pod is not restarted
+  end note
+```
+
+Custom endpoint operations map to HTTP methods:
+
+```mermaid
+flowchart LR
+  r["@ReadOperation"] --> get["GET /manage/features[/name]"]
+  w["@WriteOperation"] --> post["POST /manage/features/name"]
+  d["@DeleteOperation"] --> del["DELETE /manage/features/name"]
+```

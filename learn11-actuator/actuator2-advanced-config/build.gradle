@@ -1,0 +1,10 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+}
+
+// writes META-INF/build-info.properties so /info shows the build version and time
+springBoot {
+    buildInfo()
+}
