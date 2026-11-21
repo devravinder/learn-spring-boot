@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: mfa4-step-up
+
+server:
+  port: 8124
+  servlet:
+    session:
+      timeout: 30m # the session lives long; only risky pages ask again
+
+mfa:
+  step-up-window: 2m # how fresh the password must be for /transfer

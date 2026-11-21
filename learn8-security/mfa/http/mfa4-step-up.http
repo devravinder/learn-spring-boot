@@ -1,0 +1,13 @@
+@base = http://localhost:8124
+
+### sign in (copy _csrf from GET /login)
+POST {{base}}/login
+Content-Type: application/x-www-form-urlencoded
+
+username=alice&password=password&_csrf={{csrf}}
+
+### fresh -> 200; after the window -> 302 /login?factor.type=password&factor.reason=expired
+GET {{base}}/transfer
+
+### always allowed during the session
+GET {{base}}/

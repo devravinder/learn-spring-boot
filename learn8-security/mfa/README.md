@@ -121,3 +121,19 @@ TPM, security key), and the server stores only the public key.
 Why passkeys beat codes: there's nothing to type, so nothing can be phished or
 replayed. A TOTP code typed into a fake site works on the real one for 30
 seconds. A passkey signature made for another origin is never accepted.
+
+## mfa4-step-up
+
+Step-up authentication: a long session for reading, and a fresh proof for risky actions.
+
+| Concern            | How it's handled                                                            |
+| ------------------ | --------------------------------------------------------------------------- |
+| Rule               | `AllRequiredFactorsAuthorizationManager` with `passwordAuthority().validDuration(2m)` on `/transfer/**` |
+| Timestamp          | every `FactorGrantedAuthority` carries `issuedAt`, shown on the statement page |
+| Expired factor     | Spring redirects to `/login?factor.type=password&factor.reason=expired`      |
+| After re-auth      | the saved request (`/transfer`) opens again with a new `issuedAt`            |
+| Other pages        | `/` keeps working for the whole 30-minute session                            |
+
+The same rule works with any factor: `ottAuthority()`, `webauthnAuthority()`
+or a custom one like `FACTOR_TOTP`. "Ask for the passkey again before deleting
+the account" is one line.

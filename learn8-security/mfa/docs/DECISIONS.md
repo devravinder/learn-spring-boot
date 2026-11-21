@@ -81,3 +81,17 @@
   (ctap2, internal, resident key, user verified).
 - Rejected: faking the WebAuthn JSON with HTTP calls, which skips the browser
   checks this module is about.
+
+## ADR-013: Step-up with `validDuration`, not a shorter session
+
+- Decision: keep a 30-minute session and require a password from the last
+  2 minutes only for `/transfer/**`.
+- Rejected:
+  - A 2-minute session timeout everywhere, which annoys users on read-only pages.
+  - A custom "last login time" session attribute, which Security 7 now tracks per factor.
+
+## ADR-014: Protect the GET form too
+
+- Decision: the rule covers `GET /transfer` as well as `POST`.
+- Why: the user re-authenticates before typing the details. A blocked POST
+  can't be replayed after login, so the entered data would be lost.

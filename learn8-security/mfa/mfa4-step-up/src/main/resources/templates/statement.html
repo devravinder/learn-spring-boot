@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="utf-8"><title>Statement</title></head>
+<body>
+<h1>Statement for <span th:text="${user}">user</span></h1>
+<p>Password entered at <code id="password-at" th:text="${passwordAt}">time</code>.</p>
+<p><a href="/transfer">Send money</a> needs a recent password.</p>
+</body>
+</html>

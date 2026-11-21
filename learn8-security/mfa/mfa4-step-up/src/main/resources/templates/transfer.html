@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="utf-8"><title>Send money</title></head>
+<body>
+<h1>Send money</h1>
+<p>Password confirmed at <code th:text="${passwordAt}">time</code>.</p>
+<form method="post" th:action="@{/transfer}">
+    <label>To <input name="to" value="bob"></label>
+    <label>Amount <input name="amount" value="500"></label>
+    <button>Send</button>
+</form>
+</body>
+</html>

@@ -102,3 +102,18 @@ sequenceDiagram
   Note over S: verify with the stored public key, counter must increase
   S-->>B: FACTOR_WEBAUTHN added to FACTOR_PASSWORD
 ```
+
+## mfa4-step-up
+
+```mermaid
+stateDiagram-v2
+  [*] --> Fresh: password entered (issuedAt = now)
+  Fresh --> Stale: window passes
+  Fresh --> Fresh: GET /, GET/POST /transfer
+  Stale --> Stale: GET / still allowed
+  Stale --> Reauth: GET or POST /transfer
+  Reauth --> Fresh: password again (new issuedAt)
+  note right of Stale
+    /login?factor.type=password&factor.reason=expired
+  end note
+```

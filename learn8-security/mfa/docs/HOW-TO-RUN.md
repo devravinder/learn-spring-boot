@@ -86,3 +86,16 @@ with resident keys and user verification.
 | "Sign in with a passkey" first                 | then asked for the password, username pre-filled |
 | alice's password in a browser without her passkey | stuck on the passkey step               |
 | delete the passkey on the register page        | alice is back to password only             |
+
+## mfa4-step-up
+
+Use a short window so you don't have to wait two minutes:
+
+```bash
+./gradlew :learn8-security:mfa:mfa4-step-up:bootRun --args='--mfa.step-up-window=20s'
+```
+
+1. Sign in at <http://localhost:8124> as `alice / password`.
+2. "Send money" works right away.
+3. Wait 20 seconds. The statement still works, but "Send money" asks for the password again.
+4. After you enter it, you're back on the transfer form, and the time on the statement has changed.

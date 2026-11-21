@@ -12,7 +12,7 @@ One commit per task, made once its checks pass.
 | 5   | `learn8-security/mfa/mfa1-totp`                             | done    |
 | 6   | `learn8-security/mfa/mfa2-email-ott`                        | done    |
 | 7   | `learn8-security/mfa/mfa3-passkeys`                         | done    |
-| 8   | `learn8-security/mfa/mfa4-step-up`                          | planned |
+| 8   | `learn8-security/mfa/mfa4-step-up`                          | done    |
 | 9   | `learn8-security/mfa/mfa5-keycloak-otp`                     | planned |
 | 10  | `learn12-resilience`: flaky service + Spring core retry     | planned |
 | 11  | `learn12-resilience/resilience2-resilience4j`               | planned |
@@ -87,3 +87,9 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] `webAuthn()` with rpId, origin; opt-in MFA with `when = WEBAUTHN_REGISTERED`
 - [x] Shared in-memory passkey repositories; either factor order; signature counter
 - [x] 13 browser checks in Chrome with a CDP virtual authenticator
+
+## Task 8: step-up authentication
+
+- [x] `RequiredFactor.validDuration` on `/transfer/**`; `issuedAt` shown to the user
+- [x] Expired factor redirect, re-auth returns to the saved request, other pages unaffected
+- [x] 10 end-to-end checks with a 5 s window
