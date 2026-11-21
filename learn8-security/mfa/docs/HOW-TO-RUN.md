@@ -60,3 +60,29 @@ docker compose -f learn8-security/mfa/infra/docker-compose.yaml up -d
 
 The MailHog JSON API is handy for scripts:
 `curl -s 'localhost:8025/api/v2/search?kind=to&query=alice@example.test'`.
+
+## mfa3-passkeys
+
+```bash
+./gradlew :learn8-security:mfa:mfa3-passkeys:bootRun
+```
+
+Use Chrome, Edge, Safari or Firefox on <http://localhost:8123>. WebAuthn
+needs a secure context, and `localhost` counts as one even over http.
+
+1. Sign in as `alice / password`. The home page shows only `FACTOR_PASSWORD`.
+2. Click "Manage passkeys", type a label, then click "Register". Windows Hello,
+   Touch ID or your phone creates the passkey.
+3. You're asked for the passkey right away. MFA is now on for alice.
+4. Sign out and in again: password, then "Sign in with a passkey". Both factors are listed.
+
+No passkey hardware? In Chrome DevTools, open `More tools → WebAuthn`, enable
+the virtual authenticator environment and add a `ctap2 / internal` authenticator
+with resident keys and user verification.
+
+| Try                                            | Expected                                   |
+| ---------------------------------------------- | ------------------------------------------ |
+| sign in as `bob` (no passkey)                  | password only                              |
+| "Sign in with a passkey" first                 | then asked for the password, username pre-filled |
+| alice's password in a browser without her passkey | stuck on the passkey step               |
+| delete the passkey on the register page        | alice is back to password only             |

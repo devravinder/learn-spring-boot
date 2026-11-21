@@ -11,7 +11,7 @@ One commit per task, made once its checks pass.
 | 4   | `learn10-observability/observe4-otel-javaagent`             | done    |
 | 5   | `learn8-security/mfa/mfa1-totp`                             | done    |
 | 6   | `learn8-security/mfa/mfa2-email-ott`                        | done    |
-| 7   | `learn8-security/mfa/mfa3-passkeys`                         | planned |
+| 7   | `learn8-security/mfa/mfa3-passkeys`                         | done    |
 | 8   | `learn8-security/mfa/mfa4-step-up`                          | planned |
 | 9   | `learn8-security/mfa/mfa5-keycloak-otp`                     | planned |
 | 10  | `learn12-resilience`: flaky service + Spring core retry     | planned |
@@ -81,3 +81,9 @@ Docs: [learn11-actuator](../learn11-actuator/README.md).
 - [x] `oneTimeTokenLogin()` with a mail sender to MailHog; resolver bound to the signed-in user
 - [x] Single use, expiry, either factor order, link alone is not enough
 - [x] 13 end-to-end checks reading the MailHog API
+
+## Task 7: passkeys
+
+- [x] `webAuthn()` with rpId, origin; opt-in MFA with `when = WEBAUTHN_REGISTERED`
+- [x] Shared in-memory passkey repositories; either factor order; signature counter
+- [x] 13 browser checks in Chrome with a CDP virtual authenticator

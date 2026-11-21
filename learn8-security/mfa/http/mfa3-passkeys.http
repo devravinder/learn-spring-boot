@@ -1,0 +1,14 @@
+# Passkeys need the browser's WebAuthn API; use a browser for the ceremony.
+# These show the JSON endpoints that the generated pages call.
+@base = http://localhost:8123
+
+### registration options (signed-in session + _csrf header)
+POST {{base}}/webauthn/register/options
+X-CSRF-TOKEN: {{csrf}}
+
+### authentication options (challenge)
+POST {{base}}/webauthn/authenticate/options
+X-CSRF-TOKEN: {{csrf}}
+
+### registered passkeys page
+GET {{base}}/webauthn/register

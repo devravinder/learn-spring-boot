@@ -101,3 +101,23 @@ The built-in Security 7 path: no custom filter at all.
 Email is a weaker factor than TOTP or passkeys. Anyone who controls the
 inbox (or a forwarding rule) gets the link. It's a common fallback, though, and it
 shows the framework's built-in flow.
+
+## mfa3-passkeys
+
+A passkey is a key pair. The private key stays on the device (phone, laptop
+TPM, security key), and the server stores only the public key.
+
+| Concern            | How it's handled                                                         |
+| ------------------ | ------------------------------------------------------------------------ |
+| Enable             | `http.webAuthn(...)` with `rpId`, `rpName`, `allowedOrigins`; `spring-security-webauthn` |
+| Rule               | `@EnableMultiFactorAuthentication(PASSWORD, WEBAUTHN, when = WEBAUTHN_REGISTERED)` |
+| Opt-in MFA         | users without a passkey sign in with the password only; MFA starts the moment one is registered |
+| Register           | `/webauthn/register` (default page): options → `navigator.credentials.create` → `POST /webauthn/register` |
+| Sign in            | "Sign in with a passkey" on `/login`; either factor can come first        |
+| Storage            | `PublicKeyCredentialUserEntityRepository` + `UserCredentialRepository` (in-memory maps) |
+| Cloned keys        | the signature counter is stored and must keep going up                    |
+| Phishing           | the browser signs only for `rpId=localhost` from the allowed origin, so a fake site gets nothing |
+
+Why passkeys beat codes: there's nothing to type, so nothing can be phished or
+replayed. A TOTP code typed into a fake site works on the real one for 30
+seconds. A passkey signature made for another origin is never accepted.

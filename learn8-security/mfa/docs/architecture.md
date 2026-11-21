@@ -68,3 +68,37 @@ sequenceDiagram
   Note over A: token consumed once, FACTOR_OTT added to FACTOR_PASSWORD
   A-->>B: 302 / (both factors)
 ```
+
+## mfa3-passkeys
+
+Registration:
+
+```mermaid
+sequenceDiagram
+  participant B as Browser JS
+  participant Au as Authenticator (device)
+  participant S as App
+  B->>S: POST /webauthn/register/options
+  S-->>B: challenge, rp.id=localhost, user handle
+  B->>Au: navigator.credentials.create(options)
+  Note over Au: user verification (PIN, fingerprint), new key pair
+  Au-->>B: public key + attestation, signed over the challenge
+  B->>S: POST /webauthn/register
+  Note over S: check challenge + origin, store public key and counter
+```
+
+Sign-in as the second factor:
+
+```mermaid
+sequenceDiagram
+  participant B as Browser JS
+  participant Au as Authenticator
+  participant S as App
+  B->>S: POST /webauthn/authenticate/options
+  S-->>B: challenge
+  B->>Au: navigator.credentials.get(challenge)
+  Au-->>B: signature with the private key (never leaves the device)
+  B->>S: POST /login/webauthn
+  Note over S: verify with the stored public key, counter must increase
+  S-->>B: FACTOR_WEBAUTHN added to FACTOR_PASSWORD
+```

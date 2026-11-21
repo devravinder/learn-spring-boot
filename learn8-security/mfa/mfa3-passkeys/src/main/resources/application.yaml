@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: mfa3-passkeys
+
+server:
+  port: 8123
+
+mfa:
+  rp-id: localhost # browsers allow WebAuthn on http only for localhost
+  origin: http://localhost:8123

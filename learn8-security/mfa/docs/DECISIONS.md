@@ -59,3 +59,25 @@
 
 - Decision: `mailhog/mailhog` on 1025 (SMTP) and 8025 (web and API).
 - Rejected: a real SMTP provider. That breaks the "nothing leaves the machine" rule.
+
+## ADR-010: Passkeys as opt-in MFA (`when = WEBAUTHN_REGISTERED`)
+
+- Decision: MFA is required only once a user has a passkey.
+- Why: that's how most sites roll passkeys out, and nobody gets locked out before enrolling.
+- Rejected: mandatory for everyone, which needs an enrollment path for users
+  with no device, as mfa1 does for TOTP.
+
+## ADR-011: Passkey repositories as beans
+
+- Context: the `WEBAUTHN_REGISTERED` condition failed at startup with
+  "No qualifying bean of type PublicKeyCredentialUserEntityRepository".
+- Decision: declare `MapPublicKeyCredentialUserEntityRepository` and
+  `MapUserCredentialRepository` beans that both the filters and the condition use.
+- Consequence: swap them for JDBC versions to keep passkeys across restarts.
+
+## ADR-012: Browser test with a CDP virtual authenticator
+
+- Decision: test in Chrome with `WebAuthn.addVirtualAuthenticator`
+  (ctap2, internal, resident key, user verified).
+- Rejected: faking the WebAuthn JSON with HTTP calls, which skips the browser
+  checks this module is about.
